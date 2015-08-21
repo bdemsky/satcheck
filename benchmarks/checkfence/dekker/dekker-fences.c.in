@@ -1,0 +1,75 @@
+#include "lsl_protos.h"
+/*
+ * Dekker's critical section algorithm, implemented with fences.
+ *
+ * URL:
+ *   http://www.justsoftwaresolutions.co.uk/threading/
+ */
+
+
+int flag0, flag1;
+int turn;
+
+int var = 0;
+
+void p0() {
+	flag0 = 1;
+
+	while (flag1) {
+		if (turn != 0) {
+			flag0=0;
+			while (turn != 0) {
+				lsl_assume(false);
+			}
+			flag0=1;
+		} else {
+				lsl_assume(false);
+		}
+	}
+
+	// critical section
+	var=1;
+
+	turn=1;
+	flag0=0;
+}
+
+void p1() {
+	flag1=1;
+
+	while (flag0) {
+		if (turn != 1) {
+			flag1=0;
+			while (turn!=1) {
+				lsl_assume(false);
+			}
+			flag1=1;
+		} else {
+				lsl_assume(false);
+		}
+	}
+	// critical section
+	var=2;
+	turn=0;
+	flag1=0;
+}
+
+void init() {
+	flag0=0;
+	flag1=0;
+	turn=0;
+}
+
+void p0l() {
+	int i;
+	for(i=0;i<PROBLEMSIZE;i++) {
+		p0();
+	}
+}
+
+void p1l() {
+	int i;
+	for(i=0;i<PROBLEMSIZE;i++) {
+		p1();
+	}
+}

@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <pthread.h>
+#include <atomic>
+
+
+/** Example implementation of linux rw lock along with 2 thread test
+ *  driver... */
+
+typedef union {
+	std::atomic<int> lock;
+} lock_t;
+
+static inline bool write_trylock(lock_t *rw) {
+	int oldvalue=0;
+	//	return std::atomic_compare_exchange_strong(&rw->lock, &oldvalue, 1);
+	return rw->lock.compare_exchange_strong(oldvalue, 1);
+}
+
+
+static inline void write_unlock(lock_t *rw)
+{
+	atomic_store_explicit(&rw->lock, 0, std::memory_order_release);
+}
+
+lock_t mylock;
+int shareddata;
+
+static void foo() {
+	bool flag=write_trylock(&mylock);
+	if (flag) {
+		write_unlock(&mylock);
+	}
+}
+
+void * a(void *obj)
+{
+	int i;
+problemsize		foo();
+ return NULL;
+}
+
+int main(int argc, char **argv)
+{
+	pthread_t t1, t2;
+	mylock.lock=0;
+	
+
+	pthread_create(&t1, 0, a, NULL);
+	pthread_create(&t2, 0, a, NULL);
+
+	pthread_join(t1, 0);
+	pthread_join(t2, 0);
+
+	return 0;
+}

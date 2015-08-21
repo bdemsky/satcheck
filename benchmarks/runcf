@@ -1,0 +1,15 @@
+#!/bin/bash
+DIR=`pwd`
+
+
+
+echo checkfence
+for i in checkfence/*
+do
+echo $i
+cd $i
+./bench.sh
+cd $DIR
+done
+
+

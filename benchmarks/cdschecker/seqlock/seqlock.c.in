@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <threads.h>
+#include <stdatomic.h>
+#include "threads.h"
+
+atomic_int _seq;
+atomic_int _data;
+
+void seqlock_init() {
+	atomic_store(&_seq, 0);
+	atomic_store(&_data, 0);
+}
+
+int seqlock_read() {
+	int old_seq = atomic_load(&_seq);
+	
+	int c0 = (old_seq % 2 == 1);
+	if (!c0) {
+		int res = atomic_load(&_data);
+		int seq = atomic_load(&_seq);
+    
+		int c1;
+		c1 = seq == old_seq;
+		if (c1) { // relaxed
+			return res;
+		}
+	}
+	return -1;
+}
+
+int seqlock_write(int new_data) {
+	int old_seq = atomic_load(&_seq);
+	int c2 = (old_seq % 2 == 1);
+	if (!c2) {
+		int new_seq = old_seq + 1;
+		if (atomic_compare_exchange_strong(&_seq, &old_seq, new_seq)) {
+			atomic_store(&_data, new_data);
+			atomic_fetch_add(&_seq, 1);
+			return true;
+		}
+	}
+	return false;
+}
+
+static void a(void *obj) {
+	int i;
+	for(i=0;i<PROBLEMSIZE;i++)
+		seqlock_write(3);
+}
+
+static void b(void *obj) {
+	int i;
+	for(i=0;i<PROBLEMSIZE;i++) {
+		int r1=seqlock_read();
+	}
+}
+
+static void c(void *obj) {
+	int i;
+	for(i=0;i<PROBLEMSIZE;i++) {
+		int r1=seqlock_read();
+	}
+}
+
+int user_main(int argc, char **argv) {
+	thrd_t t1; thrd_t t2; thrd_t t3;
+	seqlock_init();
+
+	thrd_create(&t1, (thrd_start_t)&a, NULL);
+	thrd_create(&t2, (thrd_start_t)&b, NULL);
+	thrd_create(&t3, (thrd_start_t)&c, NULL);
+
+	thrd_join(t1);
+	thrd_join(t2);
+	thrd_join(t3);
+	return 0;
+}

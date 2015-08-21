@@ -1,0 +1,20 @@
+1) Every branch gets a goal for each direction.
+2) Need single definition point...SSA like semantics
+
+Model checking is complete when
+For each branch it is either
+1) Each exit is covered
+2) The incoming function is covered
+3) A function is covered if
+   A) all addresses of all stores are resolved 
+	 and either
+   B) all inputs to function are covered and
+
+   C) each combination of inputs to a function are either
+      i) covered or
+      ii) unschedulable 
+
+4) A read is covered if for each value stored by a store that can access the same address it:
+   a) has seen all values
+   b) the store can't store the value to same address
+   c) it isn't schedulable...

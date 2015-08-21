@@ -1,0 +1,62 @@
+#include "lsl_protos.h"
+
+int _seq;
+int _data;
+
+void seqlock_init() {
+	_seq=0;
+	_data=0;
+}
+
+int seqlock_read() {
+	int old_seq = _seq;
+	
+	int c0 = (old_seq % 2 == 1);
+	if (!c0) {
+		int res = _data;
+		int seq = _seq;
+		
+		int c1;
+		c1 = seq == old_seq;
+		if (c1) { // relaxed
+			return res;
+		}
+	}
+	return -1;
+}
+
+
+int seqlock_write(int new_data) {
+	int old_seq = _seq;
+	int c2 = (old_seq % 2 == 1);
+	if (!c2) {
+		int new_seq = old_seq + 1;
+		if (lsl_cas_32(&_seq, old_seq, new_seq)) {
+			_data = new_data;
+			lsl_add_32(&_seq, 1);
+			return 1;
+		}
+	}
+	return 0;
+}
+
+void a() {
+	for(int i=0;i<PROBLEMSIZE;i++)
+		seqlock_write(3);
+}
+
+void b() {
+	for(int i=0;i<PROBLEMSIZE;i++) {
+		int r1 = seqlock_read();
+	}
+}
+
+void c() {
+	for(int i=0;i<PROBLEMSIZE;i++) {
+		int r1 = seqlock_read();
+	}
+}
+
+static void i() {
+	seqlock_init();
+}

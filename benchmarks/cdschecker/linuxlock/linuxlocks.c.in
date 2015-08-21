@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <threads.h>
+#include <stdatomic.h>
+
+
+/** Example implementation of linux rw lock along with 2 thread test
+ *  driver... */
+
+typedef union {
+	atomic_int lock;
+} lock_t;
+
+static inline bool write_trylock(lock_t *rw) {
+	int oldvalue=0;
+	return atomic_compare_exchange_strong(&rw->lock, &oldvalue, 1);
+}
+
+
+static inline void write_unlock(lock_t *rw)
+{
+	atomic_store(&rw->lock, 0);
+}
+
+lock_t mylock;
+int shareddata;
+
+static void foo() {
+	bool flag=write_trylock(&mylock);
+	if (flag) {
+		write_unlock(&mylock);
+	}
+}
+
+static void a(void *obj)
+{
+	int i;
+	for(i=0;i<PROBLEMSIZE;i++)
+		foo();
+}
+
+int user_main(int argc, char **argv)
+{
+	thrd_t t1, t2;
+	atomic_init(&mylock.lock, 0);
+	
+
+	thrd_create(&t1, (thrd_start_t)&a, NULL);
+	thrd_create(&t2, (thrd_start_t)&a, NULL);
+
+	thrd_join(t1);
+	thrd_join(t2);
+
+	return 0;
+}

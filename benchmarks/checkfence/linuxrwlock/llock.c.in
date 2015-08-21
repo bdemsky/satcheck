@@ -1,0 +1,53 @@
+#include "lsl_protos.h"
+
+
+#define RW_LOCK_BIAS        TUNELOCK
+
+/** Example implementation of linux rw lock along with 2 thread test
+ *  driver... */
+
+typedef struct rwlock {
+	int lock;
+} rwlock_t;
+
+
+void lock_init(rwlock_t *lock) {
+  lock->lock=RW_LOCK_BIAS;
+}
+
+int add(int * ptr, int val) {
+  return lsl_add_32(ptr, val);
+} 
+
+int sub(int * ptr, int val) {
+  return lsl_add_32(ptr, -val);
+} 
+
+int write_trylock(rwlock_t *rw) {
+	int priorvalue=sub(&rw->lock, RW_LOCK_BIAS);
+
+	int flag=priorvalue != RW_LOCK_BIAS;
+
+	if (!flag) {
+		add(&rw->lock, RW_LOCK_BIAS);
+	}
+
+	return flag;
+}
+
+
+void write_unlock(rwlock_t *rw) {
+	add(&rw->lock, RW_LOCK_BIAS);
+}
+
+void foo(rwlock_t *mylock) {
+	int flag=write_trylock(mylock);
+	if (flag) {
+		write_unlock(mylock);
+	}
+}
+
+void bar(rwlock_t *mylock) {
+	for(int i=0;i<PROBLEMSIZE;i++)
+		foo(mylock);
+}

@@ -1,0 +1,9 @@
+do we properly handle this case?
+
+lv1 = load_64(&x);
+
+lv2 = lv1 + 5;
+
+if (lv2)
+
+--- lv2 should also be mc-visible

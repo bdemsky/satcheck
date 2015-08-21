@@ -1,0 +1,93 @@
+/*
+ * Dekker's critical section algorithm, implemented with fences.
+ *
+ * URL:
+ *   http://www.justsoftwaresolutions.co.uk/threading/
+ */
+
+#include <atomic>
+#include <pthread.h>
+
+std::atomic<bool> flag0, flag1;
+std::atomic<int> turn;
+std::atomic<int> var;
+
+extern "C" {
+void __VERIFIER_assume(int b);
+}
+
+void p0() {
+	flag0.store(true, std::memory_order_relaxed);
+
+	while (flag1.load()) {
+		if (turn.load() !=0)
+		{
+			flag0.store(false, std::memory_order_relaxed);
+			while (turn.load() != 0) {
+				__VERIFIER_assume(0);
+				//pthread_yield();
+			}
+			flag0.store(true, std::memory_order_relaxed);
+		} else
+				__VERIFIER_assume(0);
+			;
+		//			pthread_yield();
+	}
+
+	// critical section
+	var.store(1, std::memory_order_relaxed);
+
+	turn.store(1, std::memory_order_relaxed);
+	flag0.store(false, std::memory_order_relaxed);
+}
+
+void p1() {
+	flag1.store(true, std::memory_order_relaxed);
+
+	while (flag0.load()) {
+		if (turn.load() != 1) {
+			flag1.store(false, std::memory_order_relaxed);
+			while (turn.load() != 1) {
+				__VERIFIER_assume(0);
+				//pthread_yield();
+			}
+			flag1.store(true, std::memory_order_relaxed);
+		} else
+			__VERIFIER_assume(0);
+			;//pthread_yield();
+	}
+	
+	// critical section
+	var.store(2, std::memory_order_relaxed);
+
+	turn.store(0, std::memory_order_relaxed);
+	flag1.store(false, std::memory_order_relaxed);
+}
+
+void * p0l(void *arg) {
+problemsize		p0();
+	return NULL;
+}
+
+void * p1l(void *arg) {
+problemsize		p1();
+	return NULL;
+}
+
+int main(int argc, char **argv)
+{
+	pthread_t a, b;
+
+	flag0 = false;
+	flag1 = false;
+	turn = 0;
+	var=0;
+	
+	pthread_create(&a, 0, p0l, NULL);
+	pthread_create(&b, 0, p1l, NULL);
+
+	pthread_join(a, 0);
+	pthread_join(b, 0);
+
+	return 0;
+}

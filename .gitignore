@@ -1,0 +1,14 @@
+# generic types
+*.o
+*.swp
+*.swo
+*.so
+*~
+*.dot
+.*.d
+*.pdf
+
+# files in this directory
+/tags
+/doc/docs
+/README.html

@@ -1,0 +1,20 @@
+#!/bin/bash
+DIR=`pwd`
+
+echo nidhugg_sc
+for i in nidhugg/*
+do
+echo $i
+cd $i
+./bench.sh
+cd $DIR
+done
+
+echo nidhugg_tso
+for i in nidhugg/*
+do
+echo $i
+cd $i
+./benchtso.sh
+cd $DIR
+done

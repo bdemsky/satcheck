@@ -1,0 +1,88 @@
+/*
+ * Dekker's critical section algorithm, implemented with fences.
+ *
+ * URL:
+ *   http://www.justsoftwaresolutions.co.uk/threading/
+ */
+
+#include <atomic>
+#include <threads.h>
+
+#include "librace.h"
+
+std::atomic<bool> flag0, flag1;
+std::atomic<int> turn;
+std::atomic<int> var;
+
+void p0() {
+	flag0.store(true);
+
+	while (flag1.load()) {
+		if (turn.load() !=0)
+		{
+			flag0.store(false);
+			while (turn.load() != 0) {
+				thrd_yield();
+			}
+			flag0.store(true);
+		} else
+			thrd_yield();
+	}
+
+	// critical section
+	var.store(1);
+
+	turn.store(1);
+	flag0.store(false);
+}
+
+void p1() {
+	flag1.store(true);
+
+	while (flag0.load()) {
+		if (turn.load() != 1) {
+			flag1.store(false);
+			while (turn.load() != 1) {
+				thrd_yield();
+			}
+			flag1.store(true);
+		} else
+			thrd_yield();
+	}
+	
+	// critical section
+	var.store(2);
+
+	turn.store(0);
+	flag1.store(false);
+}
+
+void p0l(void *arg) {
+	int i;
+	for(i=0;i<PROBLEMSIZE;i++)
+		p0();
+}
+
+void p1l(void *arg) {
+	int i;
+	for(i=0;i<PROBLEMSIZE;i++)
+		p1();
+}
+
+int user_main(int argc, char **argv)
+{
+	thrd_t a, b;
+
+	flag0 = false;
+	flag1 = false;
+	turn = 0;
+	var=0;
+	
+	thrd_create(&a, p0l, NULL);
+	thrd_create(&b, p1l, NULL);
+
+	thrd_join(a);
+	thrd_join(b);
+
+	return 0;
+}

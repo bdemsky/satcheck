@@ -1,0 +1,21 @@
+#include "msn.c"
+
+queue_t queue;
+
+void i() 
+{
+  init_queue(&queue);
+}
+void e()
+{
+  value_t val = 1;
+	for(int i=0;i<PROBLEMSIZE;i++)
+		enqueue(&queue, val);
+}
+void d()
+{
+  boolean_t res;
+  value_t val;
+	for(int i=0;i<PROBLEMSIZE;i++)
+		res = dequeue(&queue, &val);
+}

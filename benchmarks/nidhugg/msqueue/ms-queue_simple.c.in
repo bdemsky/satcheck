@@ -1,0 +1,105 @@
+#include <pthread.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <atomic>
+#define true 1
+#define false 0
+
+
+#include "ms-queue_simple.h"
+
+queue_t queue;
+void init_queue(queue_t *q, int num_threads);
+void enqueue(queue_t *q, int val);
+bool dequeue(queue_t *q, int *retVal);
+
+void init_queue(queue_t *q, int num_threads) {
+	struct node *newnode=(struct node *) malloc(sizeof (struct node));
+	atomic_store_explicit(&newnode->value, 0, std::memory_order_release);
+
+	newnode->next.store(NULL, std::memory_order_release);
+		/* initialize queue */
+	q->head.store(newnode, std::memory_order_release);
+	
+	q->tail.store( newnode, std::memory_order_release);
+}
+
+void enqueue(queue_t *q, int val) {
+	struct node *tail;
+	struct node * node_ptr = (struct node *) malloc(sizeof(struct node));
+	atomic_store_explicit(&node_ptr->value, val, std::memory_order_release);
+	
+	node_ptr->next.store(NULL, std::memory_order_release);
+	
+	while (true) {
+		tail = (struct node *) atomic_load(&q->tail);
+		
+		struct node * next = (struct node *) atomic_load( &tail->next);
+		
+		struct node * qtail = (struct node *) atomic_load(&q->tail);
+		if (tail == qtail) {
+			
+			if (next == NULL) {
+				if (atomic_compare_exchange_strong( & tail->next,& next, node_ptr))
+					break;
+			}
+		}
+		struct node * new_tailptr = (struct node *)atomic_load( &tail->next);
+		atomic_compare_exchange_strong(&q->tail, & tail, new_tailptr);
+		//thrd_yield();
+	}
+	atomic_compare_exchange_strong(&q->tail, & tail, node_ptr);
+}
+
+bool dequeue(queue_t *q, int *retVal) {
+	while (true) {
+		struct node * head = (struct node *) atomic_load(&q->head);
+		struct node * tail = (struct node *) atomic_load(&q->tail);
+		struct node * next = (struct node *) atomic_load(&head->next);
+		
+		int t = ((struct node *) atomic_load(&q->head)) == head;
+		if (t) {
+			if (head == tail) {
+
+				if (next == NULL) {
+					return false; // NULL
+				}
+				atomic_compare_exchange_strong(&q->tail, & tail, next);
+				//thrd_yield();
+			} else {
+				*retVal = atomic_load(&next->value);
+				if (atomic_compare_exchange_strong(&q->head,& head, next)) {
+					return true;
+				} else {
+					;//thrd_yield();
+				}
+			}
+		}
+	}
+}
+
+void * e(void *param)
+{
+	problemsize enqueue(&queue, 1);
+	return NULL;
+}
+
+void * d(void *param) {
+	int val;
+	problemsize	dequeue(&queue, &val);
+	return NULL;
+}
+
+int main(int argc, char **argv)
+{
+	// MODEL_ASSERT(queue);
+
+	init_queue(&queue,  2);
+
+	pthread_t t1,t2;
+	pthread_create(&t1, 0, e, NULL);
+	pthread_create(&t2, 0, d, NULL);
+
+
+	return 0;
+}

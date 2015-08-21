@@ -1,0 +1,13 @@
+#!/bin/bash
+DIR=`pwd`
+BENCHMARKS="dekker linuxlock linuxrwlock msqueueoffset seqlock"
+
+for i in $BENCHMARKS
+do
+echo [TSO SATCheck]: Running benchmark $i
+cd satcheck/$i
+echo satcheck > log
+echo $i >> log
+./benchtso.sh
+cd $DIR
+done

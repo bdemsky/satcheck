@@ -1,0 +1,1 @@
+CDSCHECKERDIR=~/research/model-checker/

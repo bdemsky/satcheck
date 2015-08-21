@@ -1,0 +1,14 @@
+#!/bin/bash
+DIR=`pwd`
+
+echo cdschecker
+for i in cdschecker/*
+do
+echo $i
+cd $i
+./bench.sh
+cd $DIR
+done
+
+
+

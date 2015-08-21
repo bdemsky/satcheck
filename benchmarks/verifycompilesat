@@ -1,0 +1,4 @@
+#!/bin/bash
+# note: should do something about seqlock, which is .cc not .c
+for c in dekker linuxlock linuxrwlock msqueueoffset ; do (. satcheck/$c/benchmark-config.sh; diff -u satcheck-precompiled/$c/$NAME.c satcheck/$c/$NAME.c) done
+for c in seqlock ; do (. satcheck/$c/benchmark-config.sh; diff -u satcheck-precompiled/$c/$NAME.cc satcheck/$c/$NAME.cc) done
