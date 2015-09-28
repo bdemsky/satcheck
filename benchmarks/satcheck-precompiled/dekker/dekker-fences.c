@@ -37,9 +37,9 @@ void p0() {
 			_br0 = MC2_branchUsesID(_cond0_m, 1, 2, true);
 			break;
 		}
-
-	 else { _br0 = MC2_branchUsesID(_cond0_m, 0, 2, true);	MC2_merge(_br0);
-		 }	MCID _br1;
+ else { _br0 = MC2_branchUsesID(_cond0_m, 0, 2, true);	MC2_merge(_br0);
+ }
+		MCID _br1;
 		MCID _m_cond1_m=MC2_nextOpLoad(MCID_NODEP); 
 		int _cond1 = load_32(&turn);
 		MCID _cond1_m = MC2_function_id(2, 1, sizeof(_cond1), _cond1, _m_cond1_m);
@@ -57,8 +57,8 @@ void p0() {
 					_br2 = MC2_branchUsesID(_cond2_m, 1, 2, true);
 					break;
 				}
-		 else { _br2 = MC2_branchUsesID(_cond2_m, 0, 2, true);	MC2_merge(_br2);
-				 }		
+ else { _br2 = MC2_branchUsesID(_cond2_m, 0, 2, true);	MC2_merge(_br2);
+				 }				
 				MC2_yield();
 			}
 MC2_exitLoop();
@@ -106,8 +106,8 @@ void p1() {
 			_br3 = MC2_branchUsesID(_cond3_m, 1, 2, true);
 			break;
 		}
-		 else { _br3 = MC2_branchUsesID(_cond3_m, 0, 2, true);	MC2_merge(_br3);
-		 }
+ else { _br3 = MC2_branchUsesID(_cond3_m, 0, 2, true);	MC2_merge(_br3);
+		 }		
 		MCID _br4;
 		MCID _m_cond4_m=MC2_nextOpLoad(MCID_NODEP); 
 		int _cond4 = !load_32(&turn);
@@ -124,9 +124,9 @@ void p1() {
 				MCID _cond5_m = MC2_function_id(6, 1, sizeof(_cond5), _cond5, _m_cond5_m);
 				if (_cond5)
 					{_br5 = MC2_branchUsesID(_cond5_m, 1, 2, true);
-					break;
-}	 else { _br5 = MC2_branchUsesID(_cond5_m, 0, 2, true);	MC2_merge(_br5);
-				 }			MC2_yield();
+					break;}
+ else { _br5 = MC2_branchUsesID(_cond5_m, 0, 2, true);	MC2_merge(_br5);
+				 }				MC2_yield();
 			}
 MC2_exitLoop();
 
