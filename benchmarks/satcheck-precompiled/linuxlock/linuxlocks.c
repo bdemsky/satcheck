@@ -58,8 +58,8 @@ int user_main(int argc, char **argv)
 {
 	thrd_t t1, t2;//, t3, t4;
 	mylock = (rwlock_t*)malloc(sizeof(rwlock_t));
-	_fn0 = MC2_function_id(0, 0, sizeof (mylock), (uint64_t)mylock); 
-	MC2_nextOpStoreOffset(_fn0, MC2_OFFSET(rwlock_t *, lock), MCID_NODEP);
+
+	_fn0 = MC2_function_id(0, 0, sizeof (mylock), (uint64_t)mylock); 	MC2_nextOpStoreOffset(_fn0, MC2_OFFSET(rwlock_t *, lock), MCID_NODEP);
 	store_32(&mylock->lock, 0);
 
 	thrd_create(&t1, (thrd_start_t)&a, NULL);

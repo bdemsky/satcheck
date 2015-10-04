@@ -11,11 +11,12 @@
 
 void t1(void* arg) {
 
-  int t1, t2;
+  int t1, t2, sum;
 
   t1 = load_32(&i);
   t2 = load_32(&j);
-  store_32(&i, t1 + t2);
+  sum = t1 + t2;
+  store_32(&i, sum);
 
   t1 = load_32(&i);
   if (t1 > 3) {
@@ -25,14 +26,15 @@ void t1(void* arg) {
 
 void t2(void* arg) {
 
-  int t1, t2;
+  int tt1, tt2, sum;
 
-  t1 = load_32(&j);
-  t2 = load_32(&i);
-  store_32(&j, t1 + t2);
+  tt1 = load_32(&j);
+  tt2 = load_32(&i);
+  sum = tt1 + tt2;
+  store_32(&j, sum);
 
-  t1 = load_32(&j);
-  if (t1 > 3) {
+  tt1 = load_32(&j);
+  if (tt1 > 3) {
     assert(0);
   }
 }

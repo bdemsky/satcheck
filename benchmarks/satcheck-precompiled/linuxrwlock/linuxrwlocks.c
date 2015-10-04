@@ -179,8 +179,8 @@ MC2_exitLoop();
 int user_main(int argc, char **argv)
 {
 	mylock = (rwlock_t*)malloc(sizeof(rwlock_t));
-	_fn1 = MC2_function_id(0, 0, sizeof (mylock), (uint64_t)mylock); 
 
+_fn1 = MC2_function_id(0, 0, sizeof (mylock), (uint64_t)mylock); 
 	thrd_t t1, t2;
 	//, t3, t4;
 	MC2_nextOpStoreOffset(_fn1, MC2_OFFSET(rwlock_t *, lock), MCID_NODEP);

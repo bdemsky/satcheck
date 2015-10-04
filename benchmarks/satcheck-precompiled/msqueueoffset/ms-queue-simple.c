@@ -37,8 +37,8 @@ void init_queue(MCID _mq, queue_t *q, MCID _mnum_threads, int num_threads) {
 void enqueue(MCID _mq, queue_t *q, MCID _mval, unsigned int val) {
 	MCID _mtail; struct node *tail;
 	MCID _fn1; struct node * node_ptr; node_ptr = (struct node *)malloc(sizeof(struct node));
-	_fn1 = MC2_function_id(0, 1, sizeof (node_ptr), (uint64_t)node_ptr, _fn1); 
-	
+
+	_fn1 = MC2_function_id(0, 0, sizeof (node_ptr), (uint64_t)node_ptr); 	
 	MC2_nextOpStoreOffset(_fn1, MC2_OFFSET(struct node *, value), _mval);
 	store_32(&node_ptr->value, val);
 	
