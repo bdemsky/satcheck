@@ -953,8 +953,15 @@ public:
                     DeclRefExpr * l = dyn_cast<DeclRefExpr>(lhs), *r = dyn_cast<DeclRefExpr>(rhs);
                     is_equality = true;
                     prel << "\nMCID " << condVarEncoded.str() << ";\n";
-                    std::string ld = DeclToMCVar.find(l->getDecl())->second,
+                    std::string ld, rd;
+                    if (DeclToMCVar.find(l->getDecl()) != DeclToMCVar.end())
+                        ld = DeclToMCVar.find(l->getDecl())->second;
+                    else
+                        ld = encode(l->getDecl()->getName());
+                    if (DeclToMCVar.find(r->getDecl()) != DeclToMCVar.end())
                         rd = DeclToMCVar.find(r->getDecl())->second;
+                    else
+                        rd = encode(r->getDecl()->getName());
 
                     prel << "\nint " << condVar << " = MC2_equals(" <<
                         ld << ", (uint64_t)" << l->getNameInfo().getName().getAsString() << ", " <<
