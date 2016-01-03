@@ -348,6 +348,9 @@ void ConstGen::printRecord(EPRecord *record, int file) {
 		if (record->getType()==NONLOCALTRANS) {
 			return;
 		}
+		if (record->getType()==LOOPEXIT) {
+			return;
+		}
 		if (record->getType()==BRANCHDIR) {
 			EPRecord *next=record->getNextRecord();
 			if (next != NULL)
@@ -661,13 +664,13 @@ void ConstGen::genTSOTransOrderConstraints() {
 					Constraint * storeload=getOrderConstraint(store, rec);
 					Constraint * earlystoreload=getOrderConstraint(laststore, rec);
 					Constraint * c=new Constraint(IMPLIES, storeload, earlystoreload);
-					ADDCONSTRAINT(c, "earylstore");
+					ADDCONSTRAINT(c, "earlystore");
 				}
 				if (lastload != NULL) {
 					Constraint * storeearlyload=getOrderConstraint(store, lastload);
 					Constraint * storeload=getOrderConstraint(store, rec);
 					Constraint * c=new Constraint(IMPLIES, storeearlyload, storeload);
-					ADDCONSTRAINT(c, "earylload");
+					ADDCONSTRAINT(c, "earlyload");
 				}
 				lastload=rec;
 			}
@@ -1788,6 +1791,9 @@ void ConstGen::visitRecord(EPRecord *record) {
 		recordExecCond(record);
 		insertBranch(record);
 		break;
+	case LOOPEXIT:
+		recordExecCond(record);
+		break;
 	case NONLOCALTRANS:
 		recordExecCond(record);
 		insertNonLocal(record);
@@ -1863,6 +1869,9 @@ void ConstGen::traverseRecord(EPRecord *record, bool initial) {
 			workstack->push_back(record->getChildRecord());
 		}
 		if (record->getType()==NONLOCALTRANS) {
+			return;
+		}
+		if (record->getType()==LOOPEXIT) {
 			return;
 		}
 		if (record->getType()==BRANCHDIR) {

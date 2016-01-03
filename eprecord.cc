@@ -83,6 +83,8 @@ const char * eventToStr(EventType event) {
 		return "yield";
 	case NONLOCALTRANS:
 		return "nonlocal";
+	case LOOPEXIT:
+		return "loopexit";
 	case LABEL:
 		return "label";
 	case LOOPENTER:
@@ -115,6 +117,7 @@ IntHashSet * EPRecord::getReturnValueSet() {
 	case YIELD:
 	case FENCE:
 	case NONLOCALTRANS:
+	case LOOPEXIT:
 	case LABEL:
 	case LOOPENTER:
 	case LOOPSTART:
@@ -187,7 +190,6 @@ void EPRecord::print(int f) {
 		dprintf(f,"}");
 		delete it;
 	}
-	dprintf(f, "}");
 
 	
 	execpoint->print(f);

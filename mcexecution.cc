@@ -895,6 +895,9 @@ void MCExecution::exitLoop() {
 	if (!currexecpoint->directInLoop()) {
 		breakstate=getOrCreateCurrRecord(NONLOCALTRANS, NULL, 0, 0, 8, false);
 		currexecpoint->incrementTop();
+	} else {
+		breakstate=getOrCreateCurrRecord(LOOPEXIT, NULL, 0, 0, 8, false);
+		currexecpoint->incrementTop();
 	}
 	
 	/* Get Last Record */
@@ -927,9 +930,7 @@ void MCExecution::exitLoop() {
 	if (loopenter->getNextRecord()==NULL) {
 		loopenter->setNextRecord(labelrec);
 	}
-	if (breakstate!=NULL) {
-		breakstate->setNextRecord(labelrec);
-	}
+	breakstate->setNextRecord(labelrec);
 	currexecpoint->incrementTop();
 }
 

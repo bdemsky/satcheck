@@ -26,23 +26,27 @@ ScheduleBuilder::~ScheduleBuilder() {
 
 
 void neatPrint(EPRecord *r, ConstGen *cgen, bool *satsolution) {
-	StoreLoadSet * sls=cgen->getStoreLoadSet(r);
 	r->print();
-	model_print("address=%p ",  sls->getAddressEncoding(cgen, r, satsolution));
 	switch(r->getType()) {
 	case LOAD: {
+		StoreLoadSet * sls=cgen->getStoreLoadSet(r);
+		model_print("address=%p ",  sls->getAddressEncoding(cgen, r, satsolution));
 		model_print("rd=%lu ", sls->getValueEncoding(cgen, r, satsolution));
 	}
 		break;
 	case STORE: {
+		StoreLoadSet * sls=cgen->getStoreLoadSet(r);
+		model_print("address=%p ",  sls->getAddressEncoding(cgen, r, satsolution));
 		model_print("wr=%lu ", sls->getValueEncoding(cgen, r, satsolution));
-
 	}
 		break;
 	case RMW: {
+		StoreLoadSet * sls=cgen->getStoreLoadSet(r);
+		model_print("address=%p ",  sls->getAddressEncoding(cgen, r, satsolution));
 		model_print("rd=%lu ", sls->getRMWRValueEncoding(cgen, r, satsolution));
 		model_print("wr=%lu ", sls->getValueEncoding(cgen, r, satsolution));
 	}
+		break;
 	default:
 		;
 	}
@@ -86,7 +90,6 @@ void ScheduleBuilder::buildSchedule(bool * satsolution) {
 		}
 		//Now we have just memory operations, find the first one...make it go first
 		EPRecord *earliest=NULL;
-
 		for(uint index=0;index<threads.size();index++) {
 			EPRecord *record=threads[index];
 			
@@ -97,7 +100,6 @@ void ScheduleBuilder::buildSchedule(bool * satsolution) {
 #ifdef TSO
 			if (!stores[index]->empty()) {
 				record=stores[index]->front();
-				
 				if (record!=NULL && (earliest==NULL ||
 														 cg->getOrder(record, earliest, satsolution))) {
 					earliest=record;
@@ -207,6 +209,8 @@ EPRecord * ScheduleBuilder::processRecord(EPRecord *record, bool *satsolution) {
 	case THREADJOIN:
 		break;
 	case NONLOCALTRANS:
+		break;
+	case LOOPEXIT:
 		break;
 	case LABEL:
 		break;

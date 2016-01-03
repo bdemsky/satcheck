@@ -38,7 +38,7 @@ class ScheduleBuilder;
 class IncrementalSolver;
 
 typedef unsigned int uint;
-enum EventType {LOAD, STORE, RMW, BRANCHDIR, MERGE, FUNCTION, THREADCREATE, THREADBEGIN, NONLOCALTRANS, LABEL,YIELD, THREADJOIN, LOOPENTER, LOOPSTART, ALLOC, EQUALS, FENCE};
+enum EventType {LOAD, STORE, RMW, BRANCHDIR, MERGE, FUNCTION, THREADCREATE, THREADBEGIN, NONLOCALTRANS, LOOPEXIT, LABEL,YIELD, THREADJOIN, LOOPENTER, LOOPSTART, ALLOC, EQUALS, FENCE};
 typedef HashSet<EPRecord *, uintptr_t, 0, model_malloc, model_calloc, model_free> RecordSet;
 typedef HSIterator<EPRecord *, uintptr_t, 0, model_malloc, model_calloc, model_free> RecordIterator;
 typedef HashTable<EPRecord *, BranchRecord *, uintptr_t, 4, model_malloc, model_calloc, model_free> BranchTable;
