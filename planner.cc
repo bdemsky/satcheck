@@ -52,10 +52,11 @@ void Planner::addChange(MCChange *change) {
 }
 
 void Planner::processChanges() {
-	ChangeIterator *cit=changeset->iterator();
-	for(;cit->hasNext();) {
-		MCChange *change=cit->next();
-		cit->remove();
+	while(!changeset->isEmpty()) {
+		MCChange *change=changeset->getFirstKey();
+		if (change==NULL)
+			break;
+		changeset->remove(change);
 		if (completedset->contains(change)) {
 			delete change;
 			continue;
@@ -73,9 +74,10 @@ void Planner::processChanges() {
 		} else ASSERT(false);
 		completedset->add(change);
 	}
-	delete cit;
 
-	for(cit=completedset->iterator();cit->hasNext();) {
+	ChangeIterator *cit=completedset->iterator();
+
+	for(;cit->hasNext();) {
 		MCChange *change=cit->next();
 		cit->remove();
 		delete change;

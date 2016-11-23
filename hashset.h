@@ -151,6 +151,10 @@ class HashSet {
 		 return NULL;
  }
 
+ _Key getFirstKey() {
+	 return list->key;
+ }
+
  bool contains(_Key key) {
 	 return table->get(key)!=NULL;
  }
@@ -209,7 +213,6 @@ class HashSet {
  void operator delete[](void *p, size_t size) {
 	 _free(p);
  }
-
  private:
  HashTable<_Key, LinkNode<_Key>*, _KeyInt, _Shift, _malloc, _calloc, _free, hash_function, equals> * table;
  LinkNode<_Key> *list;
