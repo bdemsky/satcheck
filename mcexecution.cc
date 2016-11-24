@@ -312,6 +312,9 @@ void MCExecution::doStore(thread_id_t tid) {
 	SnapList<EPValue *> * list=(*storebuffer)[id_to_int(tid)];
 	EPValue * epval=list->front();
 	list->pop_front();
+	if (DBG_ENABLED()) {
+		model_print("tid = %lu: ", tid);
+	}
 	doStore(epval);
 }
 

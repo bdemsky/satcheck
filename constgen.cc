@@ -192,7 +192,7 @@ bool ConstGen::canReuseEncoding() {
 		Constraint *var=goalvararray[i];
 		if (var != NULL) {
 			if (solution[var->getVar()]) {
-				//				if (goalvararray[i] != NULL)
+				//if (goalvararray[i] != NULL)
 				//model_print("SAT clearing goal %d.\n", i);
 
 				goalvararray[i]=NULL;
@@ -201,7 +201,7 @@ bool ConstGen::canReuseEncoding() {
 	}
 
 	schedulebuilder->buildSchedule(solution);
-	model_free(solution);	
+	model_free(solution);
 
 	return true;
 }
@@ -746,6 +746,15 @@ void ConstGen::genTransOrderConstraints(ModelVector<EPRecord *> * t1vec, ModelVe
 				Constraint *c13=getOrderConstraint(t1rec, t3rec);
 #ifdef TSO
 				Constraint *c32=getOrderConstraint(t3rec, t2rec);
+				if (!c32->isFalse()) {
+					//Have a store->load that could be reordered, need to generate other constraint
+					Constraint *c12=getOrderConstraint(t1rec, t2rec);
+					Constraint *c23=getOrderConstraint(t2rec, t3rec);
+					Constraint *c31=getOrderConstraint(t3rec, t1rec);
+					Constraint *slarray[] = {c31, c23, c12};
+					Constraint * intradelayedstore=new Constraint(OR, 3, slarray);
+					ADDCONSTRAINT(intradelayedstore, "intradelayedstore");
+				}
 				Constraint * array[]={c21, c32, c13};
 				Constraint *intratransorder=new Constraint(OR, 3, array);
 #else
@@ -759,6 +768,16 @@ void ConstGen::genTransOrderConstraints(ModelVector<EPRecord *> * t1vec, ModelVe
 				Constraint *c02=getOrderConstraint(t0rec, t2rec);
 #ifdef TSO
 				Constraint *c10=getOrderConstraint(t1rec, t0rec);
+
+				if (!c10->isFalse()) {
+					//Have a store->load that could be reordered, need to generate other constraint
+					Constraint *c01=getOrderConstraint(t0rec, t1rec);
+					Constraint *c12=getOrderConstraint(t1rec, t2rec);
+					Constraint *c20=getOrderConstraint(t2rec, t0rec);
+					Constraint *slarray[] = {c01, c12, c20};
+					Constraint * intradelayedstore=new Constraint(OR, 3, slarray);
+					ADDCONSTRAINT(intradelayedstore, "intradelayedstore");
+				}
 				Constraint * array[]={c10, c21, c02};
 				Constraint *intratransorder=new Constraint(OR, 3, array);
 #else

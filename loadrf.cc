@@ -84,12 +84,28 @@ void LoadRF::genConstraints(ConstGen *cg) {
 			Constraint * storebeforeconflict=cg->getOrderConstraint(store, conflictstore);
 			if (storebeforeconflict->isFalse())
 				continue;
+#ifdef TSO
+			//Have to cover the same thread case
+			Constraint *conflictbeforeload;
+			if (conflictstore->getEP()->get_tid()==load->getEP()->get_tid()) {
+				if (conflictstore->getEP()->compare(load->getEP())==CR_AFTER)
+					conflictbeforeload=&ctrue;
+				else
+					conflictbeforeload=&cfalse;
+			} else {
+				conflictbeforeload=cg->getOrderConstraint(conflictstore, load);
+			}
+			if (conflictbeforeload->isFalse()) {
+				storebeforeconflict->freerec();
+				continue;
+			}
+#else
 			Constraint * conflictbeforeload=cg->getOrderConstraint(conflictstore, load);	
 			if (conflictbeforeload->isFalse()) {
 				storebeforeconflict->freerec();
 				continue;
 			}
-
+#endif
 			rfconst=generateConstraint(numvars, vars, storeindex);
 			Constraint *array[]={storebeforeconflict,
 													 conflictbeforeload,
