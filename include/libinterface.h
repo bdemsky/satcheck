@@ -40,126 +40,130 @@ extern "C" {
 	};
 
 	/** Performs an atomic N bit RMW (read-modify-write) operation as
-			specified by op to the address specified by addr.
-			For CAS, oldval gives the value to be compared against while
-			valarg is the value to be written.
-			For EXC, valarg is the value to be written and oldval is ignored.
-			For ADD, valarg is the value to be added and oldval is ignored. */
+	 *	specified by op to data located at addr.
+	 *  For CAS, valarg is the value to be written, while
+	 *						oldval gives the value to be compared against.
+	 *	For EXC, valarg is the value to be written and oldval is ignored.
+	 *	For ADD, valarg is the value to be added and oldval is ignored. */
 	
 	uint8_t rmw_8(enum atomicop op, void *addr, uint8_t oldval, uint8_t valarg);
 	uint16_t rmw_16(enum atomicop op, void *addr, uint16_t oldval, uint16_t valarg);
 	uint32_t rmw_32(enum atomicop op, void *addr, uint32_t oldval, uint32_t valarg);
 	uint64_t rmw_64(enum atomicop op, void *addr, uint64_t oldval, uint64_t valarg);
 
-
-	/** Specifies the sources of the arguments for the following
-			RMW/Load/Store operation. All RMW/Load/Store operations must be
-			immediately preceded by a
-			MC2_nextRMW/MC2_nextOpLoad/MC2_nextOpStore call or one of the
-			offset calls specified in the next section below. The
-			MC2_nextRMW and MC2_nextOpLoad return a MCID for the value
-			read.*/
+	/** Supplies to MC2 the MCIDs for the addrs of the
+	 *	immediately-following RMW/Load/Store operation. All
+	 *	RMW/Load/Store operations must be immediately preceded by either
+	 *	a MC2_nextRMW/MC2_nextOpLoad/MC2_nextOpStore or one of the
+	 *	offset calls specified in the next section. For MC2_nextRMW and
+	 *	MC2_nextOpLoad, MC2 returns an MCID for the value read by the
+	 *	RMW/load operation. */
 	
 	MCID MC2_nextRMW(MCID addr, MCID oldval, MCID valarg);
 	MCID MC2_nextOpLoad(MCID addr);
 	void MC2_nextOpStore(MCID addr, MCID value);
 	
-	/** Specifies the sources of the arguments for the following
-			RMW/Load/Store operation that includes a fixed offset from the
-			address specified by addr. 
-			For example, load_8(x.f) could be be instrumented with a
-			MC2_nextOpLoadOffset(_m_x, offset of f in structure). */
+	/** Supplies to MC2 the MCIDs representing the target of the
+	 *	immediately-following RMW/Load/Store operation, which accesses
+	 *	memory at a fixed offset from addr.
+	 * 
+	 *	e.g. load_8(x.f) could be instrumented with
+	 *	MC2_nextOpLoadOffset(_m_x, offset of f in structure x). */
 		
 	MCID MC2_nextRMWOffset(MCID addr, uintptr_t offset, MCID oldval, MCID valarg);
 	MCID MC2_nextOpLoadOffset(MCID addr, uintptr_t offset);
 	void MC2_nextOpStoreOffset(MCID addr, uintptr_t offset, MCID value);
 
-	/** Specifies that we just took the direction "direction" of a
-			conditional branch with "num_directions" possible directions.
-			The MCIDcondition gives the MCID for the variable that we
-			conditionally branched on. The boolean anyvalue is set if any
-			non-zero value means that the branch will simply take direction
-			1.
-	*/
+	/** Tells MC2 that we just took direction "direction" of a
+	 *	conditional branch with "num_directions" possible directions.
+	 *	"condition" gives the MCID for the concrete condition variable
+	 *	that we conditionally branched on. Boolean anyvalue = true means
+	 *	that any non-zero concrete condition implies the branch will
+	 *	take direction 1. */
 
 	MCID MC2_branchUsesID(MCID condition, int direction, int num_directions, bool anyvalue);
 
-	/** Currently not used. Should be implemented later. */
+	/** Currently not used. TODO implement later. */
 	void MC2_nextOpThrd_create(MCID startfunc, MCID param);
 	void MC2_nextOpThrd_join(MCID jointhrd);
 
-	/** Specifies that we have hit the merge point of a conditional
-			branch. The MCID branchid specifies the conditional branch that
-			just merged. */
+	/** Tells MC2 that we hit the merge point of a conditional
+	 *	branch. branchid is the MCID for the condition variable of the
+	 *	branch that just merged. */
 	void MC2_merge(MCID branchid);
 
-	/** Specifies a uninterpreted function with num_args parameters, a
-			return value of numbytesretval bytes that returned the actual
-			value val. The MCIDs for all inputs are then specified
-			afterwards. The return MCID is MCID corresponding to the output
-			of the uninterpreted function. Uninterpreted functions
-			specified via this annotation are unique to the given dynamic
-			instance. For example, if there is an unintepreted function
-			call in a loop annotated by MC2_function, results from the first
-			iteration will NOT be aggregated with results from later
-			iterations.
-	*/
-
+	/** Tells MC2 that we just computed something that MC2 should treat
+	 *	as an uninterpreted function. The uninterpreted function takes
+	 *	num_args parameters and produces a return value of
+	 *	numbytesretval bytes; the actual return value is val.  The
+	 *	following varargs parameters supply MCIDs for inputs.  MC2
+	 *	returns an MCID for the return value of the uninterpreted
+	 *	function.
+	 *
+	 *	Uninterpreted functions annotated with MC2_function are unique
+	 *	to the given dynamic instance. That is, for an unintepreted
+	 *	function call annotated by MC2_function which lives inside a
+	 *	loop, results from the first iteration will NOT be aggregated
+	 *	with results from subsequent iterations. */
 	MCID MC2_function(unsigned int num_args, int numbytesretval, uint64_t val, ...);
 
-	/** Arguments are the same as MC2_function, but results are
-			aggregated for all instances with the same id. The id must be
-			greater than 0. This is generally useful for functions where all
-			inputs are specified via MCIDs. */
-
+	/** Same as MC2_function, but MC2 aggregates results for all
+	 * 	instances with the same id. The id must be greater than 0.
+	 * 	Useful for functions which have MCIDs for all inputs. 
+	 *	(MC2_function, by contrast, may omit MCIDs for some inputs.) */
 	MCID MC2_function_id(unsigned int id, unsigned int num_args, int numbytesretval, uint64_t val, ...);
 
-	/** MC2_equals implements equality comparison. It takes in two
-			arguments (val1 and val2) and the corresponding MCIDs (op1 and
-			op2). It returns the result val1==val2. The MCID for the
-			return value is returned via the pointer *retval. */
-
+	/** Asks MC2 to compare val1 (with MCID op1) and val2 (MCID op2);
+	 * 	returns val1==val2, and sets *retval to the MCID for the return value. */
+	// This function's API should change to take only op1 and op2, and return the MCID for the retval. This is difficult with the old frontend.
 	uint64_t MC2_equals(MCID op1, uint64_t val1, MCID op2, uint64_t val2, MCID *retval);
 	
-	/** MC2_phi specifies a phi function. The MCID input is the input
-			identifier and the returned MCID is the output of the phi
-			function. This is generally useful for instrumenting cases of the following form:
-			if (x) {
-				y=0;
-			} else {
-				y=1;
-			}
-			This example would require a MC2_phi at the merge point.
+	/** Tells MC2 about the MCID of an input which was merged at a merge
+	 *  point. (The merge point must also be annotated, first, with an
+	 *  MC2_merge). Returns an MCID for the output of the phi function.
+	 *
+	 * 	MC2_phi enables instrumenting cases like:
+	 *	if (x) {
+	 *		y=0;
+	 *	} else {
+	 *		y=1;
+	 *	}
+	 *	// must put here: MC2_merge(_m_x);
+	 *	// 								MC2_phi(_m_y);
 	*/
 
 	MCID MC2_phi(MCID input);
 
-	/** MC2_loop_phi is a phi function for loops. This is useful for code like the following:
-			while() {
-				x=x+1;
-				if (....)
-					break;
-			}
-			return x;
-			This example would require a MC2_loop_phi after the MC2_exitLoop annotation for the loop.
+	/** Tells MC2 about the MCID for an input used within a loop.
+	 *
+	 *	Example:
+	 *
+	 *	while (...) {
+	 *		x=x+1;
+	 *		if (...)
+	 *			break;
+	 *	}
+	 *	// MC2_exitLoop(...);
+	 *	// MC2_loop_phi(_m_x);
+	 *
 	 */
 
 	MCID MC2_loop_phi(MCID input);
 
-	/** MC2_yield is a yield operation. */
+	/** Tells MC2 about a yield. (Placed by programmers.) */
 	void MC2_yield();
 	
-	/** MC2_fence specifies that the next operation is a memory fence. */
+	/** Tells MC2 that the next operation is a memory fence. */
 	void MC2_fence();
 
-	/** MC2_enterLoop specifies that the next statement is a loop. */
+	/** Tells MC2 that the next statement is the head of a loop. */
 	void MC2_enterLoop();
 
-	/** MC2_exitLoop specifies exit of a loop. */
+	/** Tells MC2 that the previous statement exits a loop. */
 	void MC2_exitLoop();
 
-	/** MC2_loopIterator specifies the next iteration of a loop. This is
-			currently not strictly necessary to use. */
+	/** Tells MC2 that a loop is starting a new iteration. 
+	 *	Not currently strictly required. */
 	void MC2_loopIterate();
 #ifdef __cplusplus
 }
