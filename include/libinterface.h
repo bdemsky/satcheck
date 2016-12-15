@@ -88,8 +88,8 @@ extern "C" {
 	void MC2_nextOpThrd_join(MCID jointhrd);
 
 	/** Tells MC2 that we hit the merge point of a conditional
-	 *	branch. branchid is the MCID for the condition variable of the
-	 *	branch that just merged. */
+	 *	branch. branchid is the MCID returned by the corresponding
+	 *	MC2_branchUsesID function for the branch that just merged. */
 	void MC2_merge(MCID branchid);
 
 	/** Tells MC2 that we just computed something that MC2 should treat
@@ -128,7 +128,7 @@ extern "C" {
 	 *	} else {
 	 *		y=1;
 	 *	}
-	 *	// must put here: MC2_merge(_m_x);
+	 *	// must put here: MC2_merge(_branch_id);
 	 *	// 								MC2_phi(_m_y);
 	*/
 
