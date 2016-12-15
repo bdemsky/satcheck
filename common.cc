@@ -25,6 +25,7 @@
 
 /** @brief Model-checker output file descriptor; default to stdout until redirected */
 int model_out = STDOUT_FILENO;
+int model_err = STDERR_FILENO;
 
 #define CONFIG_STACKTRACE
 /** Print a backtrace of the current program state. */

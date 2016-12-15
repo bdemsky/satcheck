@@ -308,7 +308,7 @@ void ConstGen::printEventGraph() {
 	sprintf(buffer, "eventgraph%u.dot",schedule_graph);
 	schedule_graph++;
 	int file=open(buffer,O_WRONLY|O_CREAT|O_TRUNC, S_IRWXU);
-	dprintf(file, "digraph eventgraph {\n");
+	model_dprintf(file, "digraph eventgraph {\n");
 	
 	EPRecord *first=execution->getEPRecord(MCID_FIRST);
 	printRecord(first, file);
@@ -318,19 +318,19 @@ void ConstGen::printEventGraph() {
 		printRecord(record, file);
 	}
 
-	dprintf(file, "}\n");
+	model_dprintf(file, "}\n");
 	close(file);
 }
 
 void ConstGen::doPrint(EPRecord *record, int file) {
-	dprintf(file, "%lu[label=\"",(uintptr_t)record);
+	model_dprintf(file, "%lu[label=\"",(uintptr_t)record);
 	record->print(file);
-	dprintf(file, "\"];\n");
+	model_dprintf(file, "\"];\n");
 	if (record->getNextRecord()!=NULL)
-		dprintf(file, "%lu->%lu;\n", (uintptr_t) record, (uintptr_t) record->getNextRecord());
+		model_dprintf(file, "%lu->%lu;\n", (uintptr_t) record, (uintptr_t) record->getNextRecord());
 	
 	if (record->getChildRecord()!=NULL)
-		dprintf(file, "%lu->%lu[color=red];\n", (uintptr_t) record, (uintptr_t) record->getChildRecord());
+		model_dprintf(file, "%lu->%lu[color=red];\n", (uintptr_t) record, (uintptr_t) record->getChildRecord());
 }
 
 void ConstGen::printRecord(EPRecord *record, int file) {
@@ -362,7 +362,7 @@ void ConstGen::printRecord(EPRecord *record, int file) {
 				//runs code
 				if (branchdir->getFirstRecord()!=NULL) {
 					workstack->push_back(branchdir->getFirstRecord());
-					dprintf(file, "%lu->%lu[color=blue];\n", (uintptr_t) record, (uintptr_t) branchdir->getFirstRecord());
+					model_dprintf(file, "%lu->%lu[color=blue];\n", (uintptr_t) record, (uintptr_t) branchdir->getFirstRecord());
 				}
 			}
 			return;
@@ -878,7 +878,7 @@ bool * ConstGen::runSolver() {
 	} else {
 		delete solver;
 		solver=NULL;
-		dprintf(2, "INDETER\n");
+		model_print_err("INDETER\n");
 		model_print("INDETER\n");
 		exit(-1);
 		return NULL;

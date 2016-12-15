@@ -15,7 +15,7 @@
  */
 static inline void print_stacktrace(int fd = STDERR_FILENO, unsigned int max_frames = 63)
 {
-	dprintf(fd, "stack trace:\n");
+	model_dprintf(fd, "stack trace:\n");
 
 	// storage array for stack trace address data
 	void* addrlist[max_frames+1];
@@ -24,7 +24,7 @@ static inline void print_stacktrace(int fd = STDERR_FILENO, unsigned int max_fra
 	int addrlen = backtrace(addrlist, sizeof(addrlist) / sizeof(void*));
 
 	if (addrlen == 0) {
-		dprintf(fd, "  <empty, possibly corrupt>\n");
+		model_dprintf(fd, "  <empty, possibly corrupt>\n");
 		return;
 	}
 
@@ -68,17 +68,17 @@ static inline void print_stacktrace(int fd = STDERR_FILENO, unsigned int max_fra
 																			funcname, &funcnamesize, &status);
 			if (status == 0) {
 				funcname = ret; // use possibly realloc()-ed string
-				dprintf(fd, "  %s : %s+%s\n",
+				model_dprintf(fd, "  %s : %s+%s\n",
 								symbollist[i], funcname, begin_offset);
 			} else {
 				// demangling failed. Output function name as a C function with
 				// no arguments.
-				dprintf(fd, "  %s : %s()+%s\n",
+				model_dprintf(fd, "  %s : %s()+%s\n",
 								symbollist[i], begin_name, begin_offset);
 			}
 		} else {
 			// couldn't parse the line? print the whole line.
-			dprintf(fd, "  %s\n", symbollist[i]);
+			model_dprintf(fd, "  %s\n", symbollist[i]);
 		}
 	}
 

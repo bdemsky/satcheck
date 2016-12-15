@@ -132,13 +132,13 @@ IntHashSet * EPRecord::getReturnValueSet() {
 void EPRecord::print(int f) {
 	if (event==RMW) {
 		if (op==ADD)
-			dprintf(f, "add");
+			model_dprintf(f, "add");
 		else if (op==EXC)
-			dprintf(f, "exc");
+			model_dprintf(f, "exc");
 		else
-			dprintf(f, "cas");
+			model_dprintf(f, "cas");
 	} else
-		dprintf(f, "%s",eventToStr(event));
+		model_dprintf(f, "%s",eventToStr(event));
 	IntHashSet *i=NULL;
 	switch(event) {
 	case LOAD:
@@ -153,14 +153,14 @@ void EPRecord::print(int f) {
 	case FUNCTION: {
 		if (!getPhi()) {
 			CGoalIterator *cit=completed->iterator();
-			dprintf(f, "{");
+			model_dprintf(f, "{");
 			while(cit->hasNext()) {
 				CGoal *goal=cit->next();
-				dprintf(f,"(");
+				model_dprintf(f,"(");
 				for(uint i=0;i<getNumFuncInputs();i++) {
-					dprintf(f,"%lu ", goal->getValue(i+VC_BASEINDEX));
+					model_dprintf(f,"%lu ", goal->getValue(i+VC_BASEINDEX));
 				}
-				dprintf(f,"=> %lu)", goal->getOutput());
+				model_dprintf(f,"=> %lu)", goal->getOutput());
 			}
 			delete cit;
 		}
@@ -171,23 +171,23 @@ void EPRecord::print(int f) {
 	}
 	if (i!=NULL) {
 		IntIterator *it=i->iterator();
-		dprintf(f, "{");
+		model_dprintf(f, "{");
 
 		while(it->hasNext()) {
-			dprintf(f, "%lu ", it->next());
+			model_dprintf(f, "%lu ", it->next());
 		}
-		dprintf(f, "}");
+		model_dprintf(f, "}");
 		delete it;
 	}
 
 	for(uint i=0;i<numinputs;i++) {
 		IntIterator *it=setarray[i]->iterator();
-		dprintf(f,"{");
+		model_dprintf(f,"{");
 		while(it->hasNext()) {
 			uint64_t v=it->next();
-			dprintf(f,"%lu ", v);
+			model_dprintf(f,"%lu ", v);
 		}
-		dprintf(f,"}");
+		model_dprintf(f,"}");
 		delete it;
 	}
 

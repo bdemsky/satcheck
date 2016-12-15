@@ -44,7 +44,7 @@ void MC::check() {
 		execution->reset();
 		snapshot_backtrack_before(0);
 	} while(!execution->get_planner()->is_finished());
-	dprintf(2, "Finished!\n");
+	model_print_err("Finished!\n");
 }
 
 

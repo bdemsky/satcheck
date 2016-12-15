@@ -130,26 +130,26 @@ bool ExecPointEquals(ExecPoint *e1, ExecPoint * e2) {
 }
 
 void ExecPoint::print(int f) {
-	dprintf(f,"<tid=%u,",tid);
+	model_dprintf(f,"<tid=%u,",tid);
 	for(unsigned int i=0;i<size;i+=2) {
 		switch((ExecPointType)pairarray[i]) {
 		case EP_BRANCH:
-			dprintf(f,"br");
+			model_dprintf(f,"br");
 			break;
 		case EP_COUNTER:
-			dprintf(f,"cnt");
+			model_dprintf(f,"cnt");
 			break;
 		case EP_LOOP:
-			dprintf(f,"lp");
+			model_dprintf(f,"lp");
 			break;
 		default:
 			ASSERT(false);
 		}
-		dprintf(f, "(%u)", pairarray[i+1]);
+		model_dprintf(f, "(%u)", pairarray[i+1]);
 		if ((i+2)<size)
-			dprintf(f, ", ");
+			model_dprintf(f, ", ");
 	}
-	dprintf(f, ">");
+	model_dprintf(f, ">");
 }
 
 void ExecPoint::print() {

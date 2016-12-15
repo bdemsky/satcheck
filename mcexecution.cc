@@ -111,21 +111,21 @@ void MCExecution::dumpExecution() {
 	sprintf(buffer, "exec%u.dot",schedule_graph);
 	schedule_graph++;
 	int file=open(buffer,O_WRONLY|O_TRUNC|O_CREAT, S_IRWXU);
-	dprintf(file, "digraph execution {\n");
+	model_dprintf(file, "digraph execution {\n");
 	EPRecord *last=NULL;
 	for(uint i=0;i<EPList->size();i++) {
 		EPValue *epv=(*EPList)[i];
 		if (epv==NULL)
 			continue;
 		EPRecord *record=epv->getRecord();
-		dprintf(file, "%lu[label=\"",(uintptr_t)record);
+		model_dprintf(file, "%lu[label=\"",(uintptr_t)record);
 		record->print(file);
-		dprintf(file, "\"];\n");
+		model_dprintf(file, "\"];\n");
 		if (last!=NULL)
-			dprintf(file, "%lu->%lu;", (uintptr_t) last, (uintptr_t) record);
+			model_dprintf(file, "%lu->%lu;", (uintptr_t) last, (uintptr_t) record);
 		last=record;
 	}
-	dprintf(file, "}\n");
+	model_dprintf(file, "}\n");
 	close(file);
 }
 

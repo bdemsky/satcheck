@@ -26,6 +26,7 @@
 size_t allocatedReqs[REQUESTS_BEFORE_ALLOC] = { 0 };
 int nextRequest = 0;
 int howManyFreed = 0;
+int switch_alloc = 0;
 #if !USE_MPROTECT_SNAPSHOT
 static mspace sStaticSpace = NULL;
 #endif
@@ -226,7 +227,11 @@ void *malloc(size_t size)
 {
 	if (user_snapshot_space) {
 		/* Only perform user allocations from user context */
-		return user_malloc(size);
+		if (switch_alloc) {
+			return model_malloc(size);
+		} else {
+			return user_malloc(size);
+		}
 	} else
 		return HandleEarlyAllocationRequest(size);
 }
@@ -235,7 +240,11 @@ void *malloc(size_t size)
 void free(void * ptr)
 {
 	if (!DontFree(ptr))
-		mspace_free(user_snapshot_space, ptr);
+		if (switch_alloc) {
+			model_free(ptr);
+		} else {
+			mspace_free(user_snapshot_space, ptr);
+		}
 }
 
 /** @brief Snapshotting realloc implementation for user programs */
