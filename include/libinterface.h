@@ -10,9 +10,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  typedef unsigned int MCID;
+	typedef unsigned int MCID;
 #define MC2_PTR_LENGTH sizeof(void *)
-	
+
 #define MCID_NODEP ((MCID)0)
 #define MCID_INIT ((MCID)0)
 #define MCID_FIRST ((MCID)1)
@@ -20,14 +20,12 @@ extern "C" {
 #define MC2_OFFSET(x, y) (uintptr_t)(&((x)(0))->y)
 
 	/** Stores N bits of val to the location given by addr. */
-	
 	void store_8(void *addr, uint8_t val);
 	void store_16(void *addr, uint16_t val);
 	void store_32(void *addr, uint32_t val);
 	void store_64(void *addr, uint64_t val);
 
 	/** Loads N bits from the location given by addr. */
-	
 	uint8_t load_8(const void *addr);
 	uint16_t load_16(const void *addr);
 	uint32_t load_32(const void *addr);
@@ -42,7 +40,7 @@ extern "C" {
 	};
 
 	/** Performs an atomic N bit RMW (read-modify-write) operation as
-			specified by op to the address specified by addr.  
+			specified by op to the address specified by addr.
 			For CAS, oldval gives the value to be compared against while
 			valarg is the value to be written.
 			For EXC, valarg is the value to be written and oldval is ignored.
@@ -55,7 +53,7 @@ extern "C" {
 
 
 	/** Specifies the sources of the arguments for the following
-			RMW/Load/Store operation.  All RMW/Load/Store operations must be
+			RMW/Load/Store operation. All RMW/Load/Store operations must be
 			immediately preceded by a
 			MC2_nextRMW/MC2_nextOpLoad/MC2_nextOpStore call or one of the
 			offset calls specified in the next section below. The
@@ -63,8 +61,8 @@ extern "C" {
 			read.*/
 	
 	MCID MC2_nextRMW(MCID addr, MCID oldval, MCID valarg);
-  MCID MC2_nextOpLoad(MCID addr);
-  void MC2_nextOpStore(MCID addr, MCID value);
+	MCID MC2_nextOpLoad(MCID addr);
+	void MC2_nextOpStore(MCID addr, MCID value);
 	
 	/** Specifies the sources of the arguments for the following
 			RMW/Load/Store operation that includes a fixed offset from the
@@ -73,37 +71,35 @@ extern "C" {
 			MC2_nextOpLoadOffset(_m_x, offset of f in structure). */
 		
 	MCID MC2_nextRMWOffset(MCID addr, uintptr_t offset, MCID oldval, MCID valarg);
-  MCID MC2_nextOpLoadOffset(MCID addr, uintptr_t offset);
-  void MC2_nextOpStoreOffset(MCID addr, uintptr_t offset, MCID value);
+	MCID MC2_nextOpLoadOffset(MCID addr, uintptr_t offset);
+	void MC2_nextOpStoreOffset(MCID addr, uintptr_t offset, MCID value);
 
 	/** Specifies that we just took the direction "direction" of a
 			conditional branch with "num_directions" possible directions.
 			The MCIDcondition gives the MCID for the variable that we
-			conditionally branched on.  The boolean anyvalue is set if any
+			conditionally branched on. The boolean anyvalue is set if any
 			non-zero value means that the branch will simply take direction
 			1.
 	*/
 
 	MCID MC2_branchUsesID(MCID condition, int direction, int num_directions, bool anyvalue);
 
-	/** Currently not used.  Should be implemented later.  */
+	/** Currently not used. Should be implemented later. */
 	void MC2_nextOpThrd_create(MCID startfunc, MCID param);
-  void MC2_nextOpThrd_join(MCID jointhrd);
+	void MC2_nextOpThrd_join(MCID jointhrd);
 
 	/** Specifies that we have hit the merge point of a conditional
-			branch.  The MCID branchid specifies the conditional branch that
-			just merged.  */
-
-	
-  void MC2_merge(MCID branchid);
+			branch. The MCID branchid specifies the conditional branch that
+			just merged. */
+	void MC2_merge(MCID branchid);
 
 	/** Specifies a uninterpreted function with num_args parameters, a
 			return value of numbytesretval bytes that returned the actual
-			value val.  The MCIDs for all inputs are then specified
-			afterwards.  The return MCID is MCID corresponding to the output
-			of the uninterpreted function.  Uninterpreted functions
+			value val. The MCIDs for all inputs are then specified
+			afterwards. The return MCID is MCID corresponding to the output
+			of the uninterpreted function. Uninterpreted functions
 			specified via this annotation are unique to the given dynamic
-			instance.  For example, if there is an unintepreted function
+			instance. For example, if there is an unintepreted function
 			call in a loop annotated by MC2_function, results from the first
 			iteration will NOT be aggregated with results from later
 			iterations.
@@ -112,26 +108,26 @@ extern "C" {
 	MCID MC2_function(unsigned int num_args, int numbytesretval, uint64_t val, ...);
 
 	/** Arguments are the same as MC2_function, but results are
-			aggregated for all instances with the same id.  The id must be
+			aggregated for all instances with the same id. The id must be
 			greater than 0. This is generally useful for functions where all
 			inputs are specified via MCIDs. */
 
-  MCID MC2_function_id(unsigned int id, unsigned int num_args, int numbytesretval, uint64_t val, ...);
+	MCID MC2_function_id(unsigned int id, unsigned int num_args, int numbytesretval, uint64_t val, ...);
 
-	/** MC2_equals implements equality comparison.  It takes in two
+	/** MC2_equals implements equality comparison. It takes in two
 			arguments (val1 and val2) and the corresponding MCIDs (op1 and
-			op2).  It returns the result val1==val2.  The MCID for the
-			return value is returned via the pointer *retval.  */
+			op2). It returns the result val1==val2. The MCID for the
+			return value is returned via the pointer *retval. */
 
 	uint64_t MC2_equals(MCID op1, uint64_t val1, MCID op2, uint64_t val2, MCID *retval);
 	
-	/** MC2_phi specifies a phi function.  The MCID input is the input
+	/** MC2_phi specifies a phi function. The MCID input is the input
 			identifier and the returned MCID is the output of the phi
-			function.  This is generally useful for instrumenting cases of the following form:
+			function. This is generally useful for instrumenting cases of the following form:
 			if (x) {
-			   y=0;
+				y=0;
 			} else {
-			   y=1;
+				y=1;
 			}
 			This example would require a MC2_phi at the merge point.
 	*/
@@ -140,9 +136,9 @@ extern "C" {
 
 	/** MC2_loop_phi is a phi function for loops. This is useful for code like the following:
 			while() {
-          x=x+1;
-					if (....)
-					  break;
+				x=x+1;
+				if (....)
+					break;
 			}
 			return x;
 			This example would require a MC2_loop_phi after the MC2_exitLoop annotation for the loop.
@@ -151,7 +147,7 @@ extern "C" {
 	MCID MC2_loop_phi(MCID input);
 
 	/** MC2_yield is a yield operation. */
-  void MC2_yield();
+	void MC2_yield();
 	
 	/** MC2_fence specifies that the next operation is a memory fence. */
 	void MC2_fence();
@@ -164,7 +160,7 @@ extern "C" {
 
 	/** MC2_loopIterator specifies the next iteration of a loop. This is
 			currently not strictly necessary to use. */
-  void MC2_loopIterate();
+	void MC2_loopIterate();
 #ifdef __cplusplus
 }
 #endif
