@@ -12,16 +12,16 @@
 #include "classlist.h"
 
 class FunctionRecord {
- public:
+public:
 	FunctionRecord(ConstGen *cg, EPRecord *func);
 	~FunctionRecord();
 	Constraint * getValueEncoding(uint64_t val);
 	Constraint * getNoValueEncoding();
 
 	MEMALLOC;
- private:
+private:
 	EPRecord *function;
-  Constraint **vars;
+	Constraint **vars;
 	uint numvars;
 };
 #endif

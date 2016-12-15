@@ -12,13 +12,13 @@
 #include "classlist.h"
 
 class LoadRF {
- public:
+public:
 	LoadRF(EPRecord *_load, ConstGen *cg);
 	~LoadRF();
 	void genConstraints(ConstGen *cg);
 
 	MEMALLOC;
- private:
+private:
 	EPRecord *load;
 	uint numvars;
 	Constraint ** vars;

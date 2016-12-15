@@ -34,12 +34,12 @@ struct hashlistnode {
 
 template<typename _Key, int _Shift, typename _KeyInt>
 inline unsigned int default_hash_function(_Key hash) {
-  return (unsigned int)(((_KeyInt)hash) >> _Shift);
+	return (unsigned int)(((_KeyInt)hash) >> _Shift);
 }
 
 template<typename _Key>
 inline bool default_equals(_Key key1, _Key key2) {
-  return key1 == key2;
+	return key1 == key2;
 }
 
 /**
@@ -64,7 +64,7 @@ inline bool default_equals(_Key key1, _Key key2) {
  */
 template<typename _Key, typename _Val, typename _KeyInt, int _Shift = 0, void * (* _malloc)(size_t) = snapshot_malloc, void * (* _calloc)(size_t, size_t) = snapshot_calloc, void (*_free)(void *) = snapshot_free, unsigned int (*hash_function)(_Key) = default_hash_function<_Key, _Shift, _KeyInt>, bool (*equals)(_Key, _Key) = default_equals<_Key> >
 class HashTable {
- public:
+public:
 	/**
 	 * @brief Hash table constructor
 	 * @param initialcapacity Sets the initial capacity of the hash table.
@@ -81,7 +81,7 @@ class HashTable {
 		capacitymask = initialcapacity - 1;
 
 		threshold = (unsigned int)(initialcapacity * loadfactor);
-		size = 0; // Initial number of elements in the hash
+		size = 0;							// Initial number of elements in the hash
 	}
 
 	/** @brief Hash table destructor */
@@ -121,46 +121,46 @@ class HashTable {
 		size = 0;
 	}
 
- void resetanddelete() {
-	 for(unsigned int i=0;i<capacity;i++) {
-		 struct hashlistnode<_Key, _Val> *bin = &table[i];
-		 if (bin->key != NULL) {
-			 bin->key = NULL;
-			 if (bin->val != NULL) {
-				 delete bin->val;
-				 bin->val = NULL;
-			 }
-		 }
-	 }
-	 if (zero) {
-		 if (zero->val != NULL)
-			 delete zero->val;
-		 _free(zero);
-		 zero = NULL;
-	 }
-	 size = 0;
- }
+	void resetanddelete() {
+		for(unsigned int i=0;i<capacity;i++) {
+			struct hashlistnode<_Key, _Val> *bin = &table[i];
+			if (bin->key != NULL) {
+				bin->key = NULL;
+				if (bin->val != NULL) {
+					delete bin->val;
+					bin->val = NULL;
+				}
+			}
+		}
+		if (zero) {
+			if (zero->val != NULL)
+				delete zero->val;
+			_free(zero);
+			zero = NULL;
+		}
+		size = 0;
+	}
 
-  void resetandfree() {
-	 for(unsigned int i=0;i<capacity;i++) {
-		 struct hashlistnode<_Key, _Val> *bin = &table[i];
-		 if (bin->key != NULL) {
-			 bin->key = NULL;
-			 if (bin->val != NULL) {
-				 _free(bin->val);
-				 bin->val = NULL;
-			 }
-		 }
-	 }
-	 if (zero) {
-		 if (zero->val != NULL)
-			 _free(zero->val);
-		 _free(zero);
-		 zero = NULL;
-	 }
-	 size = 0;
- }
- 
+	void resetandfree() {
+		for(unsigned int i=0;i<capacity;i++) {
+			struct hashlistnode<_Key, _Val> *bin = &table[i];
+			if (bin->key != NULL) {
+				bin->key = NULL;
+				if (bin->val != NULL) {
+					_free(bin->val);
+					bin->val = NULL;
+				}
+			}
+		}
+		if (zero) {
+			if (zero->val != NULL)
+				_free(zero->val);
+			_free(zero);
+			zero = NULL;
+		}
+		size = 0;
+	}
+
 	/**
 	 * @brief Put a key/value pair into the table
 	 * @param key The key for the new value; must not be 0 or NULL
@@ -182,7 +182,7 @@ class HashTable {
 			resize(capacity << 1);
 
 		struct hashlistnode<_Key, _Val> *search;
-		
+
 		unsigned int index = hash_function(key);
 		do {
 			index &= capacitymask;
@@ -227,8 +227,8 @@ class HashTable {
 				if (!search->val)
 					break;
 			} else
-				if (equals(search->key, key))
-					return search->val;
+			if (equals(search->key, key))
+				return search->val;
 			index++;
 			index &= capacitymask;
 			if (index==oindex)
@@ -258,7 +258,7 @@ class HashTable {
 			}
 		}
 
-		
+
 		unsigned int index = hash_function(key);
 		do {
 			index &= capacitymask;
@@ -267,23 +267,23 @@ class HashTable {
 				if (!search->val)
 					break;
 			} else
-				if (equals(search->key, key)) {
-					_Val v=search->val;
-					//empty out this bin
-					search->val=(_Val) 1;
-					search->key=0;
-					size--;
-					return v;
-				}
+			if (equals(search->key, key)) {
+				_Val v=search->val;
+				//empty out this bin
+				search->val=(_Val) 1;
+				search->key=0;
+				size--;
+				return v;
+			}
 			index++;
 		} while (true);
 		return (_Val)0;
 	}
 
-  unsigned int getSize() const {
+	unsigned int getSize() const {
 		return size;
 	}
- 
+
 
 	/**
 	 * @brief Check whether the table contains a value for the given key
@@ -306,8 +306,8 @@ class HashTable {
 				if (!search->val)
 					break;
 			} else
-				if (equals(search->key, key))
-					return true;
+			if (equals(search->key, key))
+				return true;
 			index++;
 		} while (true);
 		return false;
@@ -327,7 +327,7 @@ class HashTable {
 			exit(EXIT_FAILURE);
 		}
 
-		table = newtable;          // Update the global hashtable upon resize()
+		table = newtable;											// Update the global hashtable upon resize()
 		capacity = newsize;
 		capacitymask = newsize - 1;
 
@@ -335,7 +335,7 @@ class HashTable {
 
 		struct hashlistnode<_Key, _Val> *bin = &oldtable[0];
 		struct hashlistnode<_Key, _Val> *lastbin = &oldtable[oldcapacity];
-		for (; bin < lastbin; bin++) {
+		for (;bin < lastbin;bin++) {
 			_Key key = bin->key;
 
 			struct hashlistnode<_Key, _Val> *search;
@@ -353,18 +353,18 @@ class HashTable {
 			search->val = bin->val;
 		}
 
-		_free(oldtable);            // Free the memory of the old hash table
+		_free(oldtable);												// Free the memory of the old hash table
 	}
-  double getLoadFactor() {return loadfactor;}
-  unsigned int getCapacity() {return capacity;}
-  struct hashlistnode<_Key, _Val> *table;
-  struct hashlistnode<_Key, _Val> *zero;
-  unsigned int capacity;
+	double getLoadFactor() {return loadfactor;}
+	unsigned int getCapacity() {return capacity;}
+	struct hashlistnode<_Key, _Val> *table;
+	struct hashlistnode<_Key, _Val> *zero;
+	unsigned int capacity;
 	unsigned int size;
- private:
+private:
 	unsigned int capacitymask;
 	unsigned int threshold;
-  double loadfactor;
+	double loadfactor;
 };
 
-#endif /* __HASHTABLE_H__ */
+#endif/* __HASHTABLE_H__ */

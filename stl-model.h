@@ -17,7 +17,7 @@
 template<typename _Tp>
 class ModelList : public std::list<_Tp, ModelAlloc<_Tp> >
 {
- public:
+public:
 	typedef std::list< _Tp, ModelAlloc<_Tp> > list;
 
 	ModelList() :
@@ -28,13 +28,13 @@ class ModelList : public std::list<_Tp, ModelAlloc<_Tp> >
 		list(n, val)
 	{ }
 
-		MEMALLOC;
+	MEMALLOC;
 };
 
 template<typename _Tp>
 class SnapList : public std::list<_Tp, SnapshotAlloc<_Tp> >
 {
- public:
+public:
 	typedef std::list<_Tp, SnapshotAlloc<_Tp> > list;
 
 	SnapList() :
@@ -51,7 +51,7 @@ class SnapList : public std::list<_Tp, SnapshotAlloc<_Tp> >
 template<typename _Tp>
 class ModelVector : public std::vector<_Tp, ModelAlloc<_Tp> >
 {
- public:
+public:
 	typedef std::vector< _Tp, ModelAlloc<_Tp> > vector;
 
 	ModelVector() :
@@ -62,13 +62,13 @@ class ModelVector : public std::vector<_Tp, ModelAlloc<_Tp> >
 		vector(n, val)
 	{ }
 
-		MEMALLOC;
+	MEMALLOC;
 };
 
 template<typename _Tp>
 class SnapVector : public std::vector<_Tp, SnapshotAlloc<_Tp> >
 {
- public:
+public:
 	typedef std::vector< _Tp, SnapshotAlloc<_Tp> > vector;
 
 	SnapVector() :
@@ -82,4 +82,4 @@ class SnapVector : public std::vector<_Tp, SnapshotAlloc<_Tp> >
 	SNAPSHOTALLOC;
 };
 
-#endif /* __STL_MODEL_H__ */
+#endif/* __STL_MODEL_H__ */

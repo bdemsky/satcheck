@@ -113,10 +113,10 @@ void MCScheduler::reset() {
 
 
 
- void MCScheduler::check_preempt() {
+void MCScheduler::check_preempt() {
 	Thread *t=execution->get_current_thread();
 #ifdef TSO
- restart_search:
+restart_search:
 	//start at the next thread
 	unsigned int tid=id_to_int(t->get_id());
 	bool storebuffer=true;
@@ -142,7 +142,7 @@ void MCScheduler::reset() {
 #else
 	//start at the next thread
 	unsigned int tid=(id_to_int(t->get_id())+1)%execution->get_num_threads();
-	
+
 	for(unsigned int i=0;i<execution->get_num_threads();i++,tid=(tid+1)%execution->get_num_threads()) {
 		//don't try to schedule finished threads
 		if (execution->get_thread(int_to_id(tid))->is_complete())
@@ -152,7 +152,7 @@ void MCScheduler::reset() {
 		}
 	}
 #endif
-	
+
 	Thread *next_thread=execution->get_thread(int_to_id(tid));
 	if (next_thread->is_complete())
 		next_thread=NULL;
@@ -185,7 +185,7 @@ bool MCScheduler::checkSet(unsigned int tid, ModelVector<ModelVector<WaitPair* >
 			CompareResult compare=stoppoint->compare(current);
 			if (compare==CR_EQUALS) {
 				//hit stop point
-				ExecPoint *waitpoint=nextwp->getWait();		
+				ExecPoint *waitpoint=nextwp->getWait();
 				thread_id_t waittid=waitpoint->get_tid();
 				ExecPoint *waitthread=execution->get_execpoint(waittid);
 				CompareResult comparewt=waitthread->compare(waitpoint);

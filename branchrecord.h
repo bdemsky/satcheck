@@ -12,7 +12,7 @@
 #include "classlist.h"
 
 class BranchRecord {
- public:
+public:
 	BranchRecord(EPRecord *record, uint numvars, Constraint **vars, bool isalwaysexecuted);
 	~BranchRecord();
 	Constraint * getAnyBranch();
@@ -22,12 +22,12 @@ class BranchRecord {
 	int numDirections() {return numdirections;}
 	bool hasNextRecord() {return hasNext;}
 	MEMALLOC;
- private:
-  EPRecord *branch;
+private:
+	EPRecord *branch;
 	bool hasNext;
-  uint numvars;
+	uint numvars;
 	uint numdirections;
 	bool alwaysexecuted;
-  Constraint **vars;
+	Constraint **vars;
 };
 #endif

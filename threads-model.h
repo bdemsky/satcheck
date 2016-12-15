@@ -48,7 +48,7 @@ typedef enum thread_state {
 
 /** @brief A Thread is created for each user-space thread */
 class Thread {
- public:
+public:
 	Thread(thread_id_t tid);
 	Thread(thread_id_t tid, thrd_t *t, void (*func)(void *), void *a, Thread *parent, EPRecord *r);
 	~Thread();
@@ -98,7 +98,7 @@ class Thread {
 		Thread_free(p);
 	}
 	EPRecord * getParentRecord() {return parentrecord;}
- private:
+private:
 	int create_context();
 
 	/** @brief The parent Thread which created this Thread */
@@ -144,4 +144,4 @@ static inline int id_to_int(thread_id_t id)
 	return id;
 }
 
-#endif /* __THREADS_MODEL_H__ */
+#endif/* __THREADS_MODEL_H__ */

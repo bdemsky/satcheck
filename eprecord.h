@@ -20,18 +20,18 @@
 typedef ModelVector<EPValue *> ValueVector;
 const char * eventToStr(EventType event);
 struct RecordIDPair {
- 	EPRecord *record;
+	EPRecord *record;
 	EPRecord *idrecord;
 };
 
 inline unsigned int RIDP_hash_function(struct RecordIDPair * pair) {
-  return (unsigned int)(((uintptr_t)pair->record) >> 4) ^ ((uintptr_t)pair->idrecord);
+	return (unsigned int)(((uintptr_t)pair->record) >> 4) ^ ((uintptr_t)pair->idrecord);
 }
 
 inline bool RIDP_equals(struct RecordIDPair * key1, struct RecordIDPair * key2) {
 	if (key1==NULL)
 		return key1==key2;
-  return key1->record == key2->record && key1->idrecord == key2->idrecord;
+	return key1->record == key2->record && key1->idrecord == key2->idrecord;
 }
 
 typedef HashSet<struct RecordIDPair *, uintptr_t, 0, model_malloc, model_calloc, model_free, RIDP_hash_function, RIDP_equals> EPRecordIDSet;
@@ -39,7 +39,7 @@ typedef HashSet<struct RecordIDPair *, uintptr_t, 0, model_malloc, model_calloc,
 typedef HSIterator<struct RecordIDPair *, uintptr_t, 0, model_malloc, model_calloc, model_free, RIDP_hash_function, RIDP_equals> EPRecordIDIterator;
 
 class EPRecord {
- public:
+public:
 	EPRecord(EventType event, ExecPoint *execpoint, EPValue *branch, uintptr_t _offset, unsigned int numinputs,uint len,  bool anyvalue = false);
 	~EPRecord();
 	ExecPoint * getEP() {return execpoint;}
@@ -83,8 +83,8 @@ class EPRecord {
 	bool isSharedGoals() {return func_shares_goalset;}
 	uintptr_t getOffset() {return offset;}
 	MEMALLOC;
-		
- private:
+
+private:
 	ValueVector * valuevector;
 	ExecPoint * execpoint;
 	CGoalSet *completed;

@@ -43,15 +43,15 @@ void ExecPoint::reset() {
 }
 
 /** Return CR_AFTER means that ep occurs after this.
-		Return CR_BEFORE means tha te occurs before this.
-		Return CR_EQUALS means that they are the same point.
-		Return CR_INCOMPARABLE means that they are not comparable.
-*/
+                Return CR_BEFORE means tha te occurs before this.
+                Return CR_EQUALS means that they are the same point.
+                Return CR_INCOMPARABLE means that they are not comparable.
+ */
 
 CompareResult ExecPoint::compare(const ExecPoint * ep) const {
 	if (this==ep)
 		return CR_EQUALS;
-	unsigned int minsize=(size<ep->size)?size:ep->size;
+	unsigned int minsize=(size<ep->size) ? size : ep->size;
 	for(unsigned int i=0;i<minsize;i+=2) {
 		ASSERT(pairarray[i]==ep->pairarray[i]);
 		if (pairarray[i+1]!=ep->pairarray[i+1]) {
@@ -122,7 +122,7 @@ bool ExecPointEquals(ExecPoint *e1, ExecPoint * e2) {
 		return e2==NULL;
 	if (e1->tid != e2->tid || e1->size != e2->size || e1->hashvalue != e2->hashvalue)
 		return false;
-	for(unsigned int i=0; i<e1->size; i++) {
+	for(unsigned int i=0;i<e1->size;i++) {
 		if (e1->pairarray[i]!=e2->pairarray[i])
 			return false;
 	}

@@ -29,12 +29,12 @@ struct RecordIntPair {
 	unsigned int index;
 };
 inline unsigned int RP_hash_function(struct RecordIntPair * pair) {
-  return (unsigned int)(((uintptr_t)pair->record) >> 4) ^ pair->index;
+	return (unsigned int)(((uintptr_t)pair->record) >> 4) ^ pair->index;
 }
 inline bool RP_equals(struct RecordIntPair * key1, struct RecordIntPair * key2) {
 	if (key1==NULL)
 		return key1==key2;
-  return key1->record == key2->record && key1->index == key2->index;
+	return key1->record == key2->record && key1->index == key2->index;
 }
 typedef HashSet<struct RecordIntPair *, uintptr_t, 0, model_malloc, model_calloc, model_free, RP_hash_function, RP_equals> EPRecordSet;
 typedef HSIterator<struct RecordIntPair *, uintptr_t, 0, model_malloc, model_calloc, model_free, RP_hash_function, RP_equals> EPRecordIterator;
@@ -45,12 +45,12 @@ struct MCExecution_snapshot {
 	MCExecution_snapshot();
 	~MCExecution_snapshot();
 	unsigned int next_thread_id;
-	
+
 	SNAPSHOTALLOC;
 };
 
 class MCExecution {
- public:
+public:
 	MCExecution();
 	~MCExecution();
 	EPRecord * getOrCreateCurrRecord(EventType et, bool * isNew, uintptr_t offset, unsigned int numinputs, uint len, bool br_anyvalue);
@@ -60,7 +60,7 @@ class MCExecution {
 	MCID nextRMW(MCID addr, uintptr_t offset, MCID oldval, MCID valarg);
 	void store(void *addr, uint64_t val, int len);
 	uint64_t load(const void *addr, int len);
-	uint64_t rmw(enum atomicop op, void *addr, uint size, uint64_t currval, uint64_t oldval, uint64_t valarg); 
+	uint64_t rmw(enum atomicop op, void *addr, uint size, uint64_t currval, uint64_t oldval, uint64_t valarg);
 	void reset();
 	MCID branchDir(MCID dir, int direction, int numdirs, bool anyvalue);
 	void merge(MCID mcid);
@@ -117,9 +117,9 @@ class MCExecution {
 	void evalGoal(EPRecord *record, CGoal *goal);
 	void dumpExecution();
 	EPRecord * getRecord(ExecPoint * ep) {return EPTable->get(ep);}
-	
+
 	MEMALLOC;
- private:
+private:
 	EPHashTable * EPTable;
 	EPValueHashTable * EPValueTable;
 	MemHashTable *memtable;
@@ -135,7 +135,7 @@ class MCExecution {
 	ExecPoint * currexecpoint;
 	MCScheduler * scheduler;
 	Planner * planner;
-	struct MCExecution_snapshot * const snap_fields;  
+	struct MCExecution_snapshot * const snap_fields;
 	Thread * curr_thread;
 	EPValue *currbranch;
 	EPRecordDepHashTable *eprecorddep;
@@ -145,7 +145,7 @@ class MCExecution {
 	ModelVector<EPRecord *> * joinvec;
 	ModelVector<CGoalSet *> * sharedgoals;
 	ModelVector<RecordSet *> * sharedfuncrecords;
-	
+
 	MCID currid;
 	MCID id_addr;
 	MCID id_oldvalue;

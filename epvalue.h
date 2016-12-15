@@ -23,7 +23,7 @@
 #define VC_FUNCOUTINDEX 1
 
 class EPValue {
- public:
+public:
 	EPValue(ExecPoint *, EPRecord *, const void *addr, uint64_t value, int len);
 	~EPValue();
 	uint64_t getValue() {return value;}
@@ -34,9 +34,9 @@ class EPValue {
 	EPRecord *firstrecord;
 	EPRecord *lastrecord;
 	EPRecord * getRecord() {return record;}
-	
+
 	MEMALLOC;
- private:
+private:
 	ExecPoint * execpoint;
 	EPRecord *record;
 	const void *addr;

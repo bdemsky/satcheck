@@ -36,7 +36,7 @@ bool Planner::is_finished() {
 void Planner::plan() {
 	DEBUG("Planning\n");
 	e->get_scheduler()->reset();
-	
+
 	if (!cgen->canReuseEncoding()) {
 		processChanges();
 		cgen->reset();
@@ -137,8 +137,8 @@ void Planner::processStore(MCChange * change) {
 }
 
 /** This function propagate news values that a function or add
-		operation may generate.
-*/
+                operation may generate.
+ */
 
 void Planner::processNewReturnValue(MCChange *change) {
 	EPRecord *record=change->getRecord();
@@ -154,15 +154,15 @@ void Planner::processNewReturnValue(MCChange *change) {
 }
 
 /** This function registers a new address for a load operation.  We
-		iterate over all stores to that new address and grab their values
-		and propagate them.
-*/
+                iterate over all stores to that new address and grab their values
+                and propagate them.
+ */
 
 void Planner::processNewLoadAddress(MCChange *change) {
 	EPRecord *load=change->getRecord();
 	void *addr=(void *)change->getValue();
 	RecordSet *storeset=e->getStoreTable(addr);
-	if (storeset == NULL) 
+	if (storeset == NULL)
 		return;
 	RecordIterator *rit=storeset->iterator();
 	while(rit->hasNext()) {
@@ -182,13 +182,13 @@ void Planner::processNewLoadAddress(MCChange *change) {
 }
 
 /** This function processes a new address for a store.  We push our
-		values to all loads from that address. */
+                values to all loads from that address. */
 
 void Planner::processNewStoreAddress(MCChange *change) {
 	EPRecord *store=change->getRecord();
 	void *addr=(void *)change->getValue();
 	RecordSet *rset=e->getLoadTable(addr);
-	if (rset == NULL) 
+	if (rset == NULL)
 		return;
 	RecordIterator *rit=rset->iterator();
 	IntHashSet *valset=store->getStoreSet();
@@ -209,7 +209,7 @@ void Planner::processNewStoreAddress(MCChange *change) {
 
 
 /** This function pushes a new store value to all loads that share an
-		address. */
+                address. */
 
 void Planner::processNewStoreValue(MCChange *change) {
 	EPRecord *store=change->getRecord();
@@ -268,7 +268,7 @@ void Planner::registerBranchValue(EPRecord *record, uint64_t val, unsigned int i
 void Planner::registerLoadValue(EPRecord *record, uint64_t val, unsigned int index) {
 	if (index==VC_ADDRINDEX)
 		val+=record->getOffset();
-	
+
 	bool is_new=record->getSet(index)->add(val);
 	if (is_new) {
 		switch(index) {
@@ -324,13 +324,13 @@ void Planner::doRMWNewAddrChange(EPRecord *record, uint64_t val) {
 	//propagate our value to new loads
 	MCChange * change=new MCChange(record, val, VC_ADDRINDEX);
 	addChange(change);
-	
+
 	//look at new stores and update our read from set
 	RecordSet *storeset=e->getStoreTable((void *)val);
 	RecordIterator *rit=storeset->iterator();
 	while(rit->hasNext()) {
 		EPRecord *store=rit->next();
-		
+
 		if (e->compatibleStoreLoad(store, record)) {
 			IntIterator * it=store->getStoreSet()->iterator();
 			while(it->hasNext()) {
@@ -388,10 +388,10 @@ void Planner::registerStoreValue(EPRecord *record, uint64_t val, unsigned int in
 		val+=record->getOffset();
 
 	bool is_new=record->getSet(index)->add(val);
-	
+
 	if (index==VC_ADDRINDEX) {
 		if (is_new)
-			e->addStoreTable((void *)val, record);		
+			e->addStoreTable((void *)val, record);
 		MCChange * change=new MCChange(record, val, index);
 		addChange(change);
 	} else if (index==VC_BASEINDEX) {

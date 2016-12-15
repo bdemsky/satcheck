@@ -13,7 +13,7 @@
 #include "stl-model.h"
 
 class StoreLoadSet {
- public:
+public:
 	StoreLoadSet();
 	~StoreLoadSet();
 	void add(EPRecord *op);
@@ -32,9 +32,9 @@ class StoreLoadSet {
 	Constraint ** getRMWRValVars(ConstGen *cg, EPRecord * op);
 	IntHashSet * getValues() {return &values;}
 	bool removeAddress(const void *addr) {addresses.remove((uint64_t)addr);return addresses.isEmpty();}
-	
+
 	MEMALLOC;
- private:
+private:
 	void genEncoding();
 	RecordSet storeloadset;
 	IntHashSet addresses;

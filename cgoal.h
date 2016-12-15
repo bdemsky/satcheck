@@ -15,7 +15,7 @@
 #include <stdint.h>
 
 class CGoal {
- public:
+public:
 	CGoal(unsigned int num, uint64_t *vals);
 	~CGoal();
 	unsigned int getNum() {return num;}
@@ -25,12 +25,12 @@ class CGoal {
 	void print();
 
 	MEMALLOC;
- private:
+private:
 	uint64_t * valarray;
 	uint64_t outputvalue;
 	unsigned int num;
 	unsigned int hash;
-	
+
 	friend bool CGoalEquals(CGoal *cg1, CGoal *cg2);
 	friend unsigned int CGoalHash(CGoal *cg);
 };

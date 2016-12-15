@@ -19,7 +19,7 @@ enum ConstraintType {
 typedef enum ConstraintType CType;
 
 class Constraint {
- public:
+public:
 	Constraint(CType t, Constraint *l, Constraint *r);
 	Constraint(CType t, Constraint *l);
 	Constraint(CType t, uint num, Constraint ** array);
@@ -40,7 +40,7 @@ class Constraint {
 	Constraint *negate();
 
 	MEMALLOC;
- private:
+private:
 	CType type;
 	uint numoperandsorvar;
 	Constraint ** operands;

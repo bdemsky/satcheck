@@ -24,7 +24,7 @@
 #include "params.h"
 
 class MC {
- public:
+public:
 	MC(struct model_params params);
 	~MC();
 	MCExecution * get_execution() const { return execution; }
@@ -33,7 +33,7 @@ class MC {
 	const model_params params;
 
 	MEMALLOC;
- private:
+private:
 	MCExecution *execution;
 	void run_execution();
 
@@ -41,4 +41,4 @@ class MC {
 };
 
 extern MC *model;
-#endif /* __MODEL_H__ */
+#endif/* __MODEL_H__ */

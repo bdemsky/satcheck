@@ -13,13 +13,13 @@
 #include "stl-model.h"
 
 class ScheduleBuilder {
- public:
+public:
 	ScheduleBuilder(MCExecution *_execution, ConstGen *cgen);
 	~ScheduleBuilder();
 	void buildSchedule(bool *satsolution);
 
 	SNAPSHOTALLOC;
- private:
+private:
 	EPRecord * getNextRecord(EPRecord *record);
 	EPRecord * processRecord(EPRecord *record, bool * satsolution);
 	ConstGen * cg;

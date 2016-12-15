@@ -37,11 +37,11 @@
 #else
 #define BIT48 0
 #endif
-#endif /* BIT48 */
+#endif/* BIT48 */
 
 /** Snapshotting configurables */
 
-/** 
+/**
  * If USE_MPROTECT_SNAPSHOT=2, then snapshot by tuned mmap() algorithm
  * If USE_MPROTECT_SNAPSHOT=1, then snapshot by using mmap() and mprotect()
  * If USE_MPROTECT_SNAPSHOT=0, then snapshot by using fork() */

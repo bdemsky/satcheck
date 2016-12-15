@@ -55,7 +55,7 @@ MCExecution::MCExecution() :
 	currid(MCID_INIT),
 	schedule_graph(0)
 {
-	EPList->push_back(NULL);//avoid using MCID of 0
+	EPList->push_back(NULL);			//avoid using MCID of 0
 #ifdef TSO
 	storebuffer = new SnapVector<SnapList<EPValue *> *>();
 #endif
@@ -217,7 +217,7 @@ uint64_t MCExecution::rmw(enum atomicop op, void *addr, uint len, uint64_t currv
 		model_print("\n");
 	}
 
-	int num_mcids=(op==ADD)?1:2;
+	int num_mcids=(op==ADD) ? 1 : 2;
 	EPRecord * record=getOrCreateCurrRecord(RMW, NULL, id_addr_offset, VC_RMWOUTINDEX-VC_RFINDEX, len, false);
 	record->setRMW(op);
 
@@ -307,7 +307,7 @@ bool MCExecution::isEmptyStoreBuffer(thread_id_t tid) {
 	SnapList<EPValue *> * list=(*storebuffer)[id_to_int(tid)];
 	return list->empty();
 }
-		
+
 void MCExecution::doStore(thread_id_t tid) {
 	SnapList<EPValue *> * list=(*storebuffer)[id_to_int(tid)];
 	EPValue * epval=list->front();
@@ -326,7 +326,7 @@ void MCExecution::doStore(EPValue *epval) {
 		model_print("flushing %d bytes *(%p) = %lu", len, addr, val);
 		currexecpoint->print();
 		model_print("\n");
-	}	
+	}
 	switch(len) {
 	case 1:
 		(*(uint8_t *)addr) = (uint8_t)val;
@@ -358,11 +358,11 @@ void MCExecution::fence() {
 #endif
 
 /** @brief EPValue is the corresponding epvalue object.
-		For loads rf is the store we read from.
-		For loads or stores, addr is the MCID for the provided address.
-		numids is the number of MCID's we take in.
-		We then list that number of MCIDs for everything we depend on.
-*/
+                For loads rf is the store we read from.
+                For loads or stores, addr is the MCID for the provided address.
+                numids is the number of MCID's we take in.
+                We then list that number of MCIDs for everything we depend on.
+ */
 
 void MCExecution::recordContext(EPValue * epv, MCID rf, MCID addr, int numids, MCID *mcids) {
 	EPRecord *currrecord=epv->getRecord();
@@ -403,7 +403,7 @@ void MCExecution::store(void *addr, uint64_t val, int len) {
 		break;
 	}
 #endif
-	
+
 	if (DBG_ENABLED()) {
 		model_print("STORE *%p=%lu ", addr, val);
 		currexecpoint->print();
@@ -471,7 +471,7 @@ uint64_t MCExecution::load(const void *addr, int len) {
 	bool found=false;
 	uint tid=id_to_int(currexecpoint->get_tid());
 	SnapList<EPValue *> *list=(*storebuffer)[tid];
-	for(SnapList<EPValue *>::reverse_iterator it=list->rbegin(); it != list->rend(); it++) {
+	for(SnapList<EPValue *>::reverse_iterator it=list->rbegin();it != list->rend();it++) {
 		EPValue *epval=*it;
 		const void *epaddr=epval->getAddr();
 		if (epaddr == addr) {
@@ -513,7 +513,7 @@ uint64_t MCExecution::load(const void *addr, int len) {
 		break;
 	}
 #endif
-	
+
 	if (DBG_ENABLED()) {
 		model_print("%lu(mid=%u)=LOAD %p ", val, id_retval, addr);
 		currexecpoint->print();
@@ -571,7 +571,7 @@ MCID MCExecution::branchDir(MCID dirid, int direction, int numdirs, bool anyvalu
 }
 
 /** @brief Processes a merge with a previous branch.  mcid gives the
-		branch we merged. */
+                branch we merged. */
 
 void MCExecution::merge(MCID mcid) {
 	EPValue * epvalue=getEPValue(mcid);
@@ -583,7 +583,7 @@ void MCExecution::merge(MCID mcid) {
 	for(int i=0;i<curr_length-orig_length;i++)
 		currexecpoint->pop();
 	//increment top
-	currexecpoint->incrementTop();  
+	currexecpoint->incrementTop();
 	//now we can create the merge point
 	if (DBG_ENABLED()) {
 		model_print("MERGE mid=%u", mcid);
@@ -603,7 +603,7 @@ MCID MCExecution::phi(MCID input) {
 
 	MCID mcids[]={input};
 	recordContext(epvalue, MCID_NODEP, MCID_NODEP, 1, mcids);
-	
+
 	MCID fnmcid=getNextMCID();
 	ASSERT(EPList->size()==fnmcid);
 	EPList->push_back(epvalue);
@@ -632,7 +632,7 @@ MCID MCExecution::loop_phi(MCID input) {
 		*p=rip;
 		phiset->add(p);
 	}
-	
+
 	MCID fnmcid=getNextMCID();
 	ASSERT(EPList->size()==fnmcid);
 	EPList->push_back(epvalue);
@@ -704,7 +704,7 @@ MCID MCExecution::function(uint functionidentifier, int len, uint64_t val, uint 
 	val=val&getmask(len);
 	EPValue * epvalue=getEPValue(record, NULL, NULL, val, len);
 	recordContext(epvalue, MCID_NODEP, MCID_NODEP, numids, mcids);
-	
+
 	uint64_t valarray[numids+VC_BASEINDEX];
 	for(uint i=0;i<VC_BASEINDEX;i++) {
 		valarray[i]=0;
@@ -744,7 +744,7 @@ MCID MCExecution::function(uint functionidentifier, int len, uint64_t val, uint 
 			delete rit;
 		}
 	}
- 	
+
 	return fnmcid;
 }
 
@@ -785,8 +785,8 @@ void MCExecution::set_current_thread(Thread *t) {
 		(*CurrBranchList)[oldtid]=currbranch;
 	}
 	curr_thread=t;
-	currexecpoint=(t==NULL)?NULL:(*ExecPointList)[id_to_int(t->get_id())];
-	currbranch=(t==NULL)?NULL:(*CurrBranchList)[id_to_int(t->get_id())];
+	currexecpoint=(t==NULL) ? NULL : (*ExecPointList)[id_to_int(t->get_id())];
+	currbranch=(t==NULL) ? NULL : (*CurrBranchList)[id_to_int(t->get_id())];
 }
 
 void MCExecution::threadStart(EPRecord *parent) {
@@ -827,7 +827,7 @@ void MCExecution::threadJoin(Thread *blocking) {
 void MCExecution::threadFinish() {
 	Thread *th = get_current_thread();
 	/* Wake up any joining threads */
-	for (unsigned int i = 0; i < get_num_threads(); i++) {
+	for (unsigned int i = 0;i < get_num_threads();i++) {
 		Thread *waiting = get_thread(int_to_id(i));
 		if (waiting->waiting_on() == th) {
 			waiting->set_waiting(NULL);
@@ -870,14 +870,14 @@ void * MCExecution::alloc(size_t size) {
 
 void MCExecution::enterLoop() {
 	EPRecord * record=getOrCreateCurrRecord(LOOPENTER, NULL, 0, 0, 8, false);
-	
+
 	//push the loop iteration counter
 	currexecpoint->push(EP_LOOP,0);
 	//push the curr iteration statement counter
 	currexecpoint->push(EP_COUNTER,0);
 	EPRecord * lpstartrecord=getOrCreateCurrRecord(LOOPSTART, NULL, 0, 0, 8, false);
 	record->setChildRecord(lpstartrecord);
-	
+
 	currexecpoint->incrementTop();
 	if (DBG_ENABLED()) {
 		model_print("ENLOOP ");
@@ -894,7 +894,7 @@ void MCExecution::exitLoop() {
 
 	/* Record last statement */
 	uint tid=id_to_int(currexecpoint->get_tid());
-	
+
 	if (!currexecpoint->directInLoop()) {
 		breakstate=getOrCreateCurrRecord(NONLOCALTRANS, NULL, 0, 0, 8, false);
 		currexecpoint->incrementTop();
@@ -902,10 +902,10 @@ void MCExecution::exitLoop() {
 		breakstate=getOrCreateCurrRecord(LOOPEXIT, NULL, 0, 0, 8, false);
 		currexecpoint->incrementTop();
 	}
-	
+
 	/* Get Last Record */
-	EPRecord *lastrecord=(currbranch==NULL)?(*alwaysexecuted)[tid]:currbranch->lastrecord;
-	
+	EPRecord *lastrecord=(currbranch==NULL) ? (*alwaysexecuted)[tid] : currbranch->lastrecord;
+
 	/* Remember last record as loop exit for this execution.  */
 	if (lastloopexit->size()<=tid) {
 		lastloopexit->resize(tid+1);
@@ -991,17 +991,17 @@ void MCExecution::addRecordDepTable(EPRecord *record, EPRecord *deprecord, unsig
 	struct RecordIntPair pair={deprecord, index};
 
 	if (!set->contains(&pair)) {
-		struct RecordIntPair *p=(struct RecordIntPair *)model_malloc(sizeof(struct RecordIntPair));		
+		struct RecordIntPair *p=(struct RecordIntPair *)model_malloc(sizeof(struct RecordIntPair));
 		*p=pair;
 		set->add(p);
 	}
 
 	if (!revrecorddep->contains(&pair)) {
-		struct RecordIntPair *p=(struct RecordIntPair *)model_malloc(sizeof(struct RecordIntPair));		
+		struct RecordIntPair *p=(struct RecordIntPair *)model_malloc(sizeof(struct RecordIntPair));
 		*p=pair;
 		revrecorddep->put(p, new ModelVector<EPRecord *>());
 	}
-	
+
 	ModelVector<EPRecord *> * recvec=revrecorddep->get(&pair);
 	for(uint i=0;i<recvec->size();i++) {
 		if ((*recvec)[i]==record)

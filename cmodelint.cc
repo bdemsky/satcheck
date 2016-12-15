@@ -13,7 +13,7 @@
 
 /** Performs a read action.*/
 uint64_t model_read_action(void * obj, memory_order ord) {
-  return -1;
+	return -1;
 }
 
 /** Performs a write action.*/
@@ -30,7 +30,7 @@ void model_init_action(void * obj, uint64_t val) {
  * a write.
  */
 uint64_t model_rmwr_action(void *obj, memory_order ord) {
-  return -1;
+	return -1;
 }
 
 /** Performs the write part of a RMW action. */

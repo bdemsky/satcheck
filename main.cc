@@ -37,12 +37,12 @@ static void print_usage(const char *program_name, struct model_params *params)
 	param_defaults(params);
 
 	model_print(
-							"Model-checker options:\n"
-							"-h, --help                  Display this help message and exit\n"
-							"-Y, --avoidyields           Fairness support by not executing yields\n"
-							"-b, --branches              Only explore all branches\n"
-							"-v[NUM], --verbose[=NUM]    Print verbose execution information. NUM is optional:\n"
-							" --                         Program arguments follow.\n\n");
+		"Model-checker options:\n"
+		"-h, --help                  Display this help message and exit\n"
+		"-Y, --avoidyields           Fairness support by not executing yields\n"
+		"-b, --branches              Only explore all branches\n"
+		"-v[NUM], --verbose[=NUM]    Print verbose execution information. NUM is optional:\n"
+		" --                         Program arguments follow.\n\n");
 	exit(EXIT_SUCCESS);
 }
 
@@ -54,7 +54,7 @@ static void parse_options(struct model_params *params, int argc, char **argv)
 		{"avoidyields", no_argument, NULL, 'Y'},
 		{"branches", no_argument, NULL, 'b'},
 		{"verbose", optional_argument, NULL, 'v'},
-		{0, 0, 0, 0} /* Terminator */
+		{0, 0, 0, 0}						/* Terminator */
 	};
 	int opt, longindex;
 	bool error = false;
@@ -72,7 +72,7 @@ static void parse_options(struct model_params *params, int argc, char **argv)
 		case 'v':
 			params->verbose = optarg ? atoi(optarg) : 1;
 			break;
-		default: /* '?' */
+		default:						/* '?' */
 			error = true;
 			break;
 		}
@@ -131,12 +131,12 @@ int main(int argc, char **argv)
 	 * called, it allocated internal buffers.  We can't easily snapshot
 	 * libc since we also use it.
 	 */
-	
+
 	printf("SATCheck\n"
 				 "Copyright (c) 2016 Regents of the University of California. All rights reserved.\n"
 				 "Distributed under the GPLv2\n"
 				 "Written by Brian Demsky and Patrick Lam\n\n");
-	
+
 	/* Configure output redirection for the model-checker */
 	redirect_output();
 

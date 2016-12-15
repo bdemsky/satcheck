@@ -33,7 +33,7 @@ void LoadRF::genConstraints(ConstGen *cg) {
 	StoreLoadSet * sls=cg->getStoreLoadSet(load);
 	uint numvalvars=sls->getNumValVars();
 	uint numaddrvars=sls->getNumAddrVars();
-	Constraint ** loadvalvars=(load->getType()==RMW)?sls->getRMWRValVars(cg, load):sls->getValVars(cg, load);
+	Constraint ** loadvalvars=(load->getType()==RMW) ? sls->getRMWRValVars(cg, load) : sls->getValVars(cg, load);
 	Constraint ** loadaddrvars=sls->getAddrVars(cg, load);
 
 	RecordIterator *sri=mrfSet->iterator();
@@ -42,7 +42,7 @@ void LoadRF::genConstraints(ConstGen *cg) {
 		Constraint ** storevalvars=sls->getValVars(cg, store);
 
 
-		Constraint *rfconst=(numvars==0)?&ctrue:generateConstraint(numvars, vars, storeindex);
+		Constraint *rfconst=(numvars==0) ? &ctrue : generateConstraint(numvars, vars, storeindex);
 		//if we read from a store, it should happen before us
 #ifdef TSO
 		Constraint *storebeforeload;
@@ -76,7 +76,7 @@ void LoadRF::genConstraints(ConstGen *cg) {
 		//ordered between the load and store
 
 		RecordSet *conflictSet=cg->computeConflictSet(store, load, mrfSet);
-		RecordIterator *sit=conflictSet!=NULL?conflictSet->iterator():mrfSet->iterator();
+		RecordIterator *sit=conflictSet!=NULL ? conflictSet->iterator() : mrfSet->iterator();
 
 		while(sit->hasNext()) {
 			EPRecord *conflictstore=sit->next();
@@ -100,7 +100,7 @@ void LoadRF::genConstraints(ConstGen *cg) {
 				continue;
 			}
 #else
-			Constraint * conflictbeforeload=cg->getOrderConstraint(conflictstore, load);	
+			Constraint * conflictbeforeload=cg->getOrderConstraint(conflictstore, load);
 			if (conflictbeforeload->isFalse()) {
 				storebeforeconflict->freerec();
 				continue;
@@ -111,10 +111,10 @@ void LoadRF::genConstraints(ConstGen *cg) {
 													 conflictbeforeload,
 													 rfconst,
 													 cg->getExecutionConstraint(conflictstore)};
-			Constraint *confstore=new Constraint(IMPLIES, 
+			Constraint *confstore=new Constraint(IMPLIES,
 																					 new Constraint(AND, 4, array),
 																					 generateEquivConstraint(numaddrvars, loadaddrvars, confstoreaddrvars)->negate());
-			
+
 			ADDCONSTRAINT2(cg, confstore, "confstore");
 		}
 		delete sit;

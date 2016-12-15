@@ -33,20 +33,20 @@ void neatPrint(EPRecord *r, ConstGen *cgen, bool *satsolution) {
 		model_print("address=%p ",  sls->getAddressEncoding(cgen, r, satsolution));
 		model_print("rd=%lu ", sls->getValueEncoding(cgen, r, satsolution));
 	}
-		break;
+	break;
 	case STORE: {
 		StoreLoadSet * sls=cgen->getStoreLoadSet(r);
 		model_print("address=%p ",  sls->getAddressEncoding(cgen, r, satsolution));
 		model_print("wr=%lu ", sls->getValueEncoding(cgen, r, satsolution));
 	}
-		break;
+	break;
 	case RMW: {
 		StoreLoadSet * sls=cgen->getStoreLoadSet(r);
 		model_print("address=%p ",  sls->getAddressEncoding(cgen, r, satsolution));
 		model_print("rd=%lu ", sls->getRMWRValueEncoding(cgen, r, satsolution));
 		model_print("wr=%lu ", sls->getValueEncoding(cgen, r, satsolution));
 	}
-		break;
+	break;
 	default:
 		;
 	}
@@ -69,7 +69,7 @@ void ScheduleBuilder::buildSchedule(bool * satsolution) {
 			EPRecord *next=processRecord(record, satsolution);
 #ifdef TSO
 			if (next != NULL) {
-			
+
 				if (next->getType()==STORE) {
 					stores[index]->push_back(next);
 					next=getNextRecord(next);
@@ -92,7 +92,7 @@ void ScheduleBuilder::buildSchedule(bool * satsolution) {
 		EPRecord *earliest=NULL;
 		for(uint index=0;index<threads.size();index++) {
 			EPRecord *record=threads[index];
-			
+
 			if (record!=NULL && (earliest==NULL ||
 													 cg->getOrder(record, earliest, satsolution))) {
 				earliest=record;
@@ -151,7 +151,7 @@ EPRecord * ScheduleBuilder::getNextRecord(EPRecord *record) {
 		if (!br->hasNextRecord())
 			next=NULL;
 	}
-	
+
 	if (next==NULL && record->getBranch()!=NULL) {
 		EPValue * epbr=record->getBranch();
 		EPRecord *branch=epbr->getRecord();
@@ -192,7 +192,7 @@ EPRecord * ScheduleBuilder::processRecord(EPRecord *record, bool *satsolution) {
 	case MERGE:
 	case ALLOC:
 	case EQUALS:
-	case FUNCTION: 
+	case FUNCTION:
 		/* Continue executing */
 		break;
 	case THREADCREATE:

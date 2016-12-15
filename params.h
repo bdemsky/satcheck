@@ -23,7 +23,7 @@ struct model_params {
 
 	/** @brief Only explore branches. */
 	bool branches;
-	
+
 	/** @brief Command-line argument count to pass to user program */
 	int argc;
 
@@ -31,4 +31,4 @@ struct model_params {
 	char **argv;
 };
 
-#endif /* __PARAMS_H__ */
+#endif/* __PARAMS_H__ */

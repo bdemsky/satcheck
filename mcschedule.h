@@ -15,20 +15,20 @@
 #include "stl-model.h"
 
 class WaitPair {
- public:
+public:
 	WaitPair(ExecPoint * stoppoint, ExecPoint * waitpoint);
 	~WaitPair();
 	ExecPoint * getStop();
 	ExecPoint * getWait();
 
 	MEMALLOC;
- private:
+private:
 	ExecPoint *stop_point;
 	ExecPoint *wait_point;
 };
 
 class MCScheduler {
- public:
+public:
 	MCScheduler(MCExecution * e);
 	~MCScheduler();
 	ucontext_t * get_system_context() { return &system_context; }
@@ -44,7 +44,7 @@ class MCScheduler {
 	void setNewFlag();
 
 	MEMALLOC;
- private:
+private:
 	unsigned int waitsetlen;
 	ucontext_t system_context;
 	MCExecution *execution;

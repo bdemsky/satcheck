@@ -21,7 +21,7 @@ enum ExecPointType {EP_BRANCH, EP_COUNTER, EP_LOOP};
 enum CompareResult {CR_BEFORE, CR_AFTER, CR_EQUALS, CR_INCOMPARABLE};
 
 class ExecPoint {
- public:
+public:
 	ExecPoint(int length, thread_id_t thread_id);
 	ExecPoint(ExecPoint * e);
 	~ExecPoint();
@@ -40,7 +40,7 @@ class ExecPoint {
 	void print();
 	void print(int f);
 	MEMALLOC;
- private:
+private:
 	unsigned int length;
 	unsigned int size;
 	execcount_t * pairarray;

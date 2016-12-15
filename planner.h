@@ -20,7 +20,7 @@ typedef HSIterator<MCChange *, intptr_t, 0, model_malloc, model_calloc, model_fr
 enum PlanResult {NOSCHEDULE, SCHEDULED};
 
 class Planner {
- public:
+public:
 	Planner(MCExecution * e);
 	~Planner();
 	bool is_finished();
@@ -35,7 +35,7 @@ class Planner {
 	bool checkConstGraph(EPRecord *record, uint64_t val);
 	void registerValue(EPRecord *record, uint64_t val, unsigned int index);
 	ConstGen * getConstGen() {return cgen;}
-	
+
 	MEMALLOC;
 
 private:

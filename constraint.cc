@@ -22,11 +22,11 @@ Constraint::Constraint(CType t, Constraint *l, Constraint *r) :
 {
 	ASSERT(l!=NULL);
 	//if (type==IMPLIES) {
-		//type=OR;
+	//type=OR;
 	//	operands[0]=l->negate();
-		//	} else {
-		operands[0]=l;
-		//	}
+	//	} else {
+	operands[0]=l;
+	//	}
 	operands[1]=r;
 }
 
@@ -45,20 +45,20 @@ Constraint::Constraint(CType t, uint num, Constraint **array) :
 	operands((Constraint **)model_malloc(num*sizeof(Constraint *))),
 	neg(NULL)
 {
-  memcpy(operands, array, num*sizeof(Constraint *));
+	memcpy(operands, array, num*sizeof(Constraint *));
 }
 
 Constraint::Constraint(CType t) :
 	type(t),
-  numoperandsorvar(0xffffffff),
-  operands(NULL),
+	numoperandsorvar(0xffffffff),
+	operands(NULL),
 	neg(NULL)
 {
 }
 
 Constraint::Constraint(CType t, uint v) :
 	type(t),
-  numoperandsorvar(v),
+	numoperandsorvar(v),
 	operands(NULL),
 	neg(NULL)
 {
@@ -153,7 +153,7 @@ void Constraint::print() {
 					model_print(" v ");
 			}
 			operands[i]->print();
-    }
+		}
 		model_print(")");
 		break;
 	case VAR:
@@ -193,7 +193,7 @@ Constraint * Constraint::clone() {
 Constraint * generateConstraint(uint numvars, Constraint ** vars, uint value) {
 	Constraint *carray[numvars];
 	for(uint j=0;j<numvars;j++) {
-		carray[j]=((value&1)==1)?vars[j]:vars[j]->negate();
+		carray[j]=((value&1)==1) ? vars[j] : vars[j]->negate();
 		value=value>>1;
 	}
 
@@ -220,7 +220,7 @@ Constraint * generateLTConstraint(ConstGen *cg, uint numvars, Constraint ** vars
 		}
 		andarray[andi++]=new Constraint(OR, ori, orarray);
 
-		value=value+(1<<(__builtin_ctz(value)));//flip the last one
+		value=value+(1<<(__builtin_ctz(value)));						//flip the last one
 	}
 }
 
@@ -345,7 +345,7 @@ ModelVector<Constraint *> * Constraint::simplify() {
 			}
 			case AND: {
 				Constraint *array[numoperandsorvar];
-				
+
 				ModelVector<Constraint *> *vec=new ModelVector<Constraint *>();
 				for(uint j=0;j<c->numoperandsorvar;j++) {
 					//copy other elements
@@ -413,7 +413,7 @@ Constraint * Constraint::negate() {
 		for(uint i=0;i<numoperandsorvar;i++) {
 			operands[i]=operands[i]->negate();
 		}
-		type=(type==AND)?OR:AND;
+		type=(type==AND) ? OR : AND;
 		return this;
 	}
 	default:

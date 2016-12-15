@@ -12,15 +12,15 @@
 #include "classlist.h"
 
 class EqualsRecord {
- public:
+public:
 	EqualsRecord(ConstGen *cg, EPRecord *func);
 	~EqualsRecord();
 	Constraint * getValueEncoding(uint64_t val);
 	EPRecord *getRecord() {return equals;}
 
 	MEMALLOC;
- private:
+private:
 	EPRecord *equals;
-  Constraint *vars;
+	Constraint *vars;
 };
 #endif

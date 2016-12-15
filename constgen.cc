@@ -92,7 +92,7 @@ ConstGen::~ConstGen() {
 
 void resetstoreloadtable(StoreLoadSetHashTable * storeloadtable) {
 	for(uint i=0;i<storeloadtable->capacity;i++) {
-		struct hashlistnode<const void *, StoreLoadSet *> * ptr=& storeloadtable->table[i];
+		struct hashlistnode<const void *, StoreLoadSet *> * ptr=&storeloadtable->table[i];
 		if (ptr->val != NULL) {
 			if (ptr->val->removeAddress(ptr->key))
 				delete ptr->val;
@@ -106,7 +106,7 @@ void resetstoreloadtable(StoreLoadSetHashTable * storeloadtable) {
 			delete storeloadtable->zero->val;
 		} else
 			ASSERT(false);
-		model_free(storeloadtable -> zero);
+		model_free(storeloadtable->zero);
 		storeloadtable->zero = NULL;
 	}
 	storeloadtable->size = 0;
@@ -182,11 +182,11 @@ bool ConstGen::canReuseEncoding() {
 #endif
 	model_print("start %lu, finish %lu\n", start,finish);
 	model_print("Incremental time = %12.6f\n", ((double)(finish-start))/1000000);
-		
+
 	if (solution==NULL) {
 		return false;
 	}
-	
+
 	//Zero out the achieved goals
 	for(uint i=0;i<goalset->size();i++) {
 		Constraint *var=goalvararray[i];
@@ -215,7 +215,7 @@ bool ConstGen::process() {
 		delete solver;
 		solver = NULL;
 	}
-	
+
 	solver=new IncrementalSolver();
 
 	traverse(true);
@@ -279,13 +279,13 @@ bool ConstGen::process() {
 	model_print("start %lu, finish %lu\n", start,finish);
 	model_print("Initial time = %12.6f\n", ((double)(finish-start))/1000000);
 
-	
+
 	if (solution==NULL) {
 		delete solver;
 		solver = NULL;
 		return true;
 	}
-		
+
 	//Zero out the achieved goals
 	for(uint i=0;i<goalset->size();i++) {
 		Constraint *var=goalvararray[i];
@@ -309,7 +309,7 @@ void ConstGen::printEventGraph() {
 	schedule_graph++;
 	int file=open(buffer,O_WRONLY|O_CREAT|O_TRUNC, S_IRWXU);
 	model_dprintf(file, "digraph eventgraph {\n");
-	
+
 	EPRecord *first=execution->getEPRecord(MCID_FIRST);
 	printRecord(first, file);
 	while(!workstack->empty()) {
@@ -328,7 +328,7 @@ void ConstGen::doPrint(EPRecord *record, int file) {
 	model_dprintf(file, "\"];\n");
 	if (record->getNextRecord()!=NULL)
 		model_dprintf(file, "%lu->%lu;\n", (uintptr_t) record, (uintptr_t) record->getNextRecord());
-	
+
 	if (record->getChildRecord()!=NULL)
 		model_dprintf(file, "%lu->%lu[color=red];\n", (uintptr_t) record, (uintptr_t) record->getChildRecord());
 }
@@ -357,7 +357,7 @@ void ConstGen::printRecord(EPRecord *record, int file) {
 				workstack->push_back(next);
 			for(uint i=0;i<record->numValues();i++) {
 				EPValue *branchdir=record->getValue(i);
-				
+
 				//Could have an empty branch, so make sure the branch actually
 				//runs code
 				if (branchdir->getFirstRecord()!=NULL) {
@@ -385,13 +385,13 @@ void ConstGen::traverse(bool initial) {
 }
 
 /** This method looks for all other memory operations that could
-		potentially share a location, and build partitions of memory
-		locations such that all memory locations that can share the same
-		address are in the same group. 
-		
-		These memory operations should share an encoding of addresses and
-		values.
-*/
+                potentially share a location, and build partitions of memory
+                locations such that all memory locations that can share the same
+                address are in the same group.
+
+                These memory operations should share an encoding of addresses and
+                values.
+ */
 
 void ConstGen::groupMemoryOperations(EPRecord *op) {
 	/** Handle our first address */
@@ -432,18 +432,18 @@ RecordSet * ConstGen::computeConflictSet(EPRecord *store, EPRecord *load, Record
 		}
 	}
 	delete storeaddr;
-	
+
 	ASSERT(numaddr!=0);
 	if (numaddr!=1)
 		return NULL;
-	
+
 	RecordSet *srscopy=baseset->copy();
 	RecordIterator *sri=srscopy->iterator();
 	while(sri->hasNext()) {
 		bool pruneconflictstore=false;
 		EPRecord *conflictstore=sri->next();
 		bool conflictafterstore=getOrderConstraint(store,conflictstore)->isTrue();
-		bool conflictbeforeload=getOrderConstraint(conflictstore,load)->isTrue(); 
+		bool conflictbeforeload=getOrderConstraint(conflictstore,load)->isTrue();
 
 		if (conflictafterstore) {
 			RecordIterator *sricheck=srscopy->iterator();
@@ -455,7 +455,7 @@ RecordSet * ConstGen::computeConflictSet(EPRecord *store, EPRecord *load, Record
 				bool checkbeforeconflict=getOrderConstraint(checkstore,conflictstore)->isTrue();
 				if (!checkbeforeconflict)
 					continue;
-				
+
 				//See if the checkstore must store to the relevant address
 				IntHashSet * storeaddr=checkstore->getSet(VC_ADDRINDEX);
 
@@ -483,7 +483,7 @@ RecordSet * ConstGen::computeConflictSet(EPRecord *store, EPRecord *load, Record
 				bool checkbeforeload=getOrderConstraint(checkstore, load)->isTrue();
 				if (!checkbeforeload)
 					continue;
-				
+
 				//See if the checkstore must store to the relevant address
 				IntHashSet * storeaddr=checkstore->getSet(VC_ADDRINDEX);
 				if (storeaddr->getSize()!=1 || !storeaddr->contains((uint64_t)commonaddr))
@@ -502,7 +502,7 @@ RecordSet * ConstGen::computeConflictSet(EPRecord *store, EPRecord *load, Record
 			sri->remove();
 		}
 	}
-	
+
 	delete sri;
 	return srscopy;
 }
@@ -513,7 +513,7 @@ RecordSet * ConstGen::computeConflictSet(EPRecord *store, EPRecord *load, Record
 RecordSet * ConstGen::getMayReadFromSet(EPRecord *load) {
 	if (load->getSet(VC_ADDRINDEX)->getSize()==1)
 		return getMayReadFromSetOpt(load);
-	
+
 	RecordSet *srs=loadtable->get(load);
 	ExecPoint *epload=load->getEP();
 	thread_id_t loadtid=epload->get_tid();
@@ -523,7 +523,7 @@ RecordSet * ConstGen::getMayReadFromSet(EPRecord *load) {
 
 		IntHashSet *addrset=load->getSet(VC_ADDRINDEX);
 		IntIterator *ait=addrset->iterator();
-		
+
 		while(ait->hasNext()) {
 			void *addr=(void *)ait->next();
 			RecordSet *rs=execution->getStoreTable(addr);
@@ -594,7 +594,7 @@ RecordSet * ConstGen::getMayReadFromSetOpt(EPRecord *load) {
 }
 
 /** This function merges two recordsets and updates the storeloadtable
-		accordingly. */
+                accordingly. */
 
 void ConstGen::mergeSets(StoreLoadSet *to, StoreLoadSet *from) {
 	RecordIterator * sri=from->iterator();
@@ -628,7 +628,7 @@ void ConstGen::insertTSOAction(EPRecord *load) {
 	while (j>0) {
 		EPRecord *oldrec=(*vector)[--j];
 		EventType oldrec_t=oldrec->getType();
-		
+
 		if (((oldrec_t == RMW) || (oldrec_t==FENCE)) &&
 				isAlwaysExecuted(oldrec)) {
 			return;
@@ -681,7 +681,7 @@ void ConstGen::genTSOTransOrderConstraints() {
 #endif
 
 /** This function creates ordering constraints to implement SC for
-		memory operations.  */
+                memory operations.  */
 
 void ConstGen::insertAction(EPRecord *record) {
 	thread_id_t tid=record->getEP()->get_tid();
@@ -732,15 +732,15 @@ void ConstGen::genTransOrderConstraints(ModelVector<EPRecord *> * t1vec, ModelVe
 			EPRecord *t2rec=(*t2vec)[t2i];
 
 			/* Note: One only really needs to generate the first constraint
-				 in the first loop and the last constraint in the last loop.
-				 I tried this and performance suffered on linuxrwlocks and
-				 linuxlocks at the current time. BD - August 2014*/
+			         in the first loop and the last constraint in the last loop.
+			         I tried this and performance suffered on linuxrwlocks and
+			         linuxlocks at the current time. BD - August 2014*/
 			Constraint *c21=getOrderConstraint(t2rec, t1rec);
 
 			/* short circuit for the trivial case */
 			if (c21->isTrue())
 				continue;
-			
+
 			for(uint t3i=t2i+1;t3i<t2vec->size();t3i++) {
 				EPRecord *t3rec=(*t2vec)[t3i];
 				Constraint *c13=getOrderConstraint(t1rec, t3rec);
@@ -761,7 +761,7 @@ void ConstGen::genTransOrderConstraints(ModelVector<EPRecord *> * t1vec, ModelVe
 				Constraint *intratransorder=new Constraint(OR, c21, c13);
 #endif
 				ADDCONSTRAINT(intratransorder,"intratransorder");
-		}
+			}
 
 			for(uint t0i=0;t0i<t1i;t0i++) {
 				EPRecord *t0rec=(*t1vec)[t0i];
@@ -784,7 +784,7 @@ void ConstGen::genTransOrderConstraints(ModelVector<EPRecord *> * t1vec, ModelVe
 				Constraint *intratransorder=new Constraint(OR, c21, c02);
 #endif
 				ADDCONSTRAINT(intratransorder,"intratransorder");
-		}
+			}
 		}
 	}
 }
@@ -865,7 +865,7 @@ void ConstGen::printNegConstraint(uint value) {
 void ConstGen::printConstraint(uint value) {
 	solver->addClauseLiteral(value);
 }
-	
+
 bool * ConstGen::runSolver() {
 	int solution=solver->solve();
 	if (solution == IS_UNSAT) {
@@ -964,7 +964,7 @@ bool ConstGen::orderThread(EPRecord *first, EPRecord *second) {
 	EPRecord *thr2start=tr2->getParentRecord();
 	if (thr2start!=NULL) {
 		ExecPoint *epthr2start=thr2start->getEP();
-		if (epthr2start->get_tid()==thr1 && 
+		if (epthr2start->get_tid()==thr1 &&
 				ep1->compare(epthr2start)==CR_AFTER)
 			return true;
 	}
@@ -1027,7 +1027,7 @@ StoreLoadSet * ConstGen::getStoreLoadSet(EPRecord *record) {
 }
 
 /** Returns a constraint that is true if the output of record has the
-		given value. */
+                given value. */
 
 Constraint * ConstGen::getRetValueEncoding(EPRecord *record, uint64_t value) {
 	switch(record->getType()) {
@@ -1083,7 +1083,7 @@ bool ConstGen::subsumesExecutionConstraint(EPRecord *recordsubsumes, EPRecord *r
 		RecordIterator *sri=srs->iterator();
 		while(sri->hasNext()) {
 			EPRecord *rec=sri->next();
-		
+
 			if (!getOrderConstraint(rec, record)->isTrue()) {
 				delete sri;
 				return false;
@@ -1097,7 +1097,7 @@ bool ConstGen::subsumesExecutionConstraint(EPRecord *recordsubsumes, EPRecord *r
 Constraint * ConstGen::getExecutionConstraint(EPRecord *record) {
 	EPValue *branch=record->getBranch();
 	RecordSet *srs=execcondtable->get(record);
-	int size=srs==NULL?0:srs->getSize();
+	int size=srs==NULL ? 0 : srs->getSize();
 	if (branch!=NULL)
 		size++;
 
@@ -1128,7 +1128,7 @@ Constraint * ConstGen::getExecutionConstraint(EPRecord *record) {
 bool ConstGen::isAlwaysExecuted(EPRecord *record) {
 	EPValue *branch=record->getBranch();
 	RecordSet *srs=execcondtable->get(record);
-	int size=srs==NULL?0:srs->getSize();
+	int size=srs==NULL ? 0 : srs->getSize();
 	if (branch!=NULL)
 		size++;
 
@@ -1165,7 +1165,7 @@ void ConstGen::processBranch(EPRecord *record) {
 		Constraint *parentbranch=new Constraint(IMPLIES, br->getAnyBranch(), baseconstraint);
 		ADDCONSTRAINT(parentbranch, "parentbranch");
 	}
-	
+
 	/** Insert criteria for directions */
 	ModelVector<EPRecord *> * depvec=execution->getRevDependences(record, VC_BASEINDEX);
 	ASSERT(depvec->size()==1);
@@ -1173,7 +1173,7 @@ void ConstGen::processBranch(EPRecord *record) {
 	for(unsigned int i=0;i<record->numValues();i++) {
 		EPValue * branchval=record->getValue(i);
 		uint64_t val=branchval->getValue();
-		
+
 		if (val==0) {
 			Constraint *execconstraint=getExecutionConstraint(record);
 			Constraint *br_false=new Constraint(IMPLIES,
@@ -1186,7 +1186,7 @@ void ConstGen::processBranch(EPRecord *record) {
 					Constraint *execconstraint=getExecutionConstraint(record);
 					Constraint *br_true1=new Constraint(IMPLIES, new Constraint(AND, getRetValueEncoding(val_record, 0)->negate(),
 																																			execconstraint),
-																																			br->getBranch(branchval));
+																							br->getBranch(branchval));
 					ADDCONSTRAINT(br_true1, "br_true1");
 				} else {
 					for(unsigned int j=0;j<val_record->numValues();j++) {
@@ -1224,7 +1224,7 @@ void ConstGen::processLoad(EPRecord *record) {
 }
 
 /** This procedure generates the constraints that set the address
-		variables for load/store/rmw operations. */
+                variables for load/store/rmw operations. */
 
 void ConstGen::processAddresses(EPRecord *record) {
 	StoreLoadSet *sls=getStoreLoadSet(record);
@@ -1242,7 +1242,7 @@ void ConstGen::processAddresses(EPRecord *record) {
 		IntIterator *it=record->getSet(VC_ADDRINDEX)->iterator();
 
 		uintptr_t offset=record->getOffset();
-		
+
 		while(it->hasNext()) {
 			uint64_t addr=it->next();
 			Constraint *srcenc=getRetValueEncoding(src, addr-offset);
@@ -1279,7 +1279,7 @@ void ConstGen::processCAS(EPRecord *record) {
 		ASSERT(depveccas->size()==1);
 		EPRecord *src=(*depveccas)[0];
 		IntIterator *it=getStoreLoadSet(record)->getValues()->iterator();
-		
+
 		while(it->hasNext()) {
 			uint64_t valcas=it->next();
 			Constraint *srcenc=getRetValueEncoding(src, valcas);
@@ -1324,7 +1324,7 @@ void ConstGen::processCAS(EPRecord *record) {
 		ASSERT(depvec->size()==1);
 		EPRecord *src=(*depvec)[0];
 		IntIterator *it=record->getStoreSet()->iterator();
-		
+
 		while(it->hasNext()) {
 			uint64_t val=it->next();
 			Constraint *srcenc=getRetValueEncoding(src, val);
@@ -1340,11 +1340,11 @@ void ConstGen::processCAS(EPRecord *record) {
 		delete it;
 	}
 	StoreLoadSet *sls=getStoreLoadSet(record);
-	
+
 	Constraint *repeatval=generateEquivConstraint(sls->getNumValVars(), sls->getValVars(this, record), sls->getRMWRValVars(this, record));
 	Constraint *failcas=new Constraint(IMPLIES, eq->negate(), repeatval);
 	ADDCONSTRAINT(failcas,"casmemfail");
-	
+
 	processAddresses(record);
 }
 
@@ -1365,7 +1365,7 @@ void ConstGen::processEXC(EPRecord *record) {
 		ASSERT(depvec->size()==1);
 		EPRecord *src=(*depvec)[0];
 		IntIterator *it=record->getStoreSet()->iterator();
-		
+
 		while(it->hasNext()) {
 			uint64_t val=it->next();
 			Constraint *srcenc=getRetValueEncoding(src, val);
@@ -1387,7 +1387,7 @@ void ConstGen::processAdd(EPRecord *record) {
 	Constraint *var=getNewVar();
 	Constraint *newadd=new Constraint(AND, var, getExecutionConstraint(record));
 	ADDGOAL(record, newadd, "newadd");
-	
+
 	ModelVector<EPRecord *> * depvec=execution->getRevDependences(record, VC_BASEINDEX);
 	if (depvec==NULL) {
 		IntIterator *valit=record->getSet(VC_BASEINDEX)->iterator();
@@ -1428,7 +1428,7 @@ void ConstGen::processAdd(EPRecord *record) {
 					Constraint *storeenc=getMemValueEncoding(record, sum);
 					Constraint *notvar=var->negate();
 					Constraint *addop=new Constraint(IMPLIES, new Constraint(AND, srcenc, loadenc),
-																								new Constraint(AND, notvar, storeenc));
+																					 new Constraint(AND, notvar, storeenc));
 					ADDCONSTRAINT(addop,"addinputvar");
 				}
 			}
@@ -1441,10 +1441,10 @@ void ConstGen::processAdd(EPRecord *record) {
 }
 
 /** This function ensures that the value of a store's SAT variables
-		matches the store's input value.
+                matches the store's input value.
 
-		TODO: Could optimize the case where the encodings are the same...
-*/
+                TODO: Could optimize the case where the encodings are the same...
+ */
 
 void ConstGen::processStore(EPRecord *record) {
 	ModelVector<EPRecord *> * depvec=execution->getRevDependences(record, VC_BASEINDEX);
@@ -1458,7 +1458,7 @@ void ConstGen::processStore(EPRecord *record) {
 		ASSERT(depvec->size()==1);
 		EPRecord *src=(*depvec)[0];
 		IntIterator *it=record->getStoreSet()->iterator();
-		
+
 		while(it->hasNext()) {
 			uint64_t val=it->next();
 			Constraint *srcenc=getRetValueEncoding(src, val);
@@ -1488,7 +1488,7 @@ void ConstGen::processLoopPhi(EPRecord *record) {
 	while(rit->hasNext()) {
 		struct RecordIDPair *rip=rit->next();
 		EPRecord *input=rip->idrecord;
-				
+
 		IntIterator * it=record->getSet(VC_BASEINDEX)->iterator();
 		while(it->hasNext()) {
 			uint64_t value=it->next();
@@ -1509,7 +1509,7 @@ void ConstGen::processPhi(EPRecord *record) {
 	ModelVector<EPRecord *> * inputs=execution->getRevDependences(record, VC_BASEINDEX);
 	for(uint i=0;i<inputs->size();i++) {
 		EPRecord * input=(*inputs)[i];
-		
+
 		IntIterator * it=record->getSet(VC_BASEINDEX)->iterator();
 		while(it->hasNext()) {
 			uint64_t value=it->next();
@@ -1585,30 +1585,30 @@ void ConstGen::processFunction(EPRecord *record) {
 void ConstGen::processEquals(EPRecord *record) {
 	ASSERT (record->getNumFuncInputs() == 2);
 	EPRecord * inputs[2];
-	
+
 	for(uint i=0;i<2;i++) {
 		ModelVector<EPRecord *> * depvec=execution->getRevDependences(record, i+VC_BASEINDEX);
 		if (depvec==NULL) {
 			inputs[i]=NULL;
 		} else if (depvec->size()==1) {
 			inputs[i]=(*depvec)[0];
-		}	else ASSERT(false);
+		}       else ASSERT(false);
 	}
 
 	//rely on this being a variable
 	Constraint * outputtrue=getRetValueEncoding(record, 1);
 	ASSERT(outputtrue->getType()==VAR);
-		
+
 	if (inputs[0]!=NULL && inputs[1]!=NULL &&
 			(inputs[0]->getType()==LOAD || inputs[0]->getType()==RMW) &&
 			(inputs[1]->getType()==LOAD || inputs[1]->getType()==RMW) &&
 			(getStoreLoadSet(inputs[0])==getStoreLoadSet(inputs[1]))) {
 		StoreLoadSet * sls=getStoreLoadSet(inputs[0]);
 		int numvalvars=sls->getNumValVars();
-		Constraint **valvar1=(inputs[0]->getType()==RMW)?sls->getRMWRValVars(this, inputs[0]):sls->getValVars(this, inputs[0]);
-		Constraint **valvar2=(inputs[1]->getType()==RMW)?sls->getRMWRValVars(this, inputs[1]):sls->getValVars(this, inputs[1]);
+		Constraint **valvar1=(inputs[0]->getType()==RMW) ? sls->getRMWRValVars(this, inputs[0]) : sls->getValVars(this, inputs[0]);
+		Constraint **valvar2=(inputs[1]->getType()==RMW) ? sls->getRMWRValVars(this, inputs[1]) : sls->getValVars(this, inputs[1]);
 		//new test
-		
+
 		Constraint *vars[numvalvars];
 		for(int i=0;i<numvalvars;i++) {
 			vars[i]=getNewVar();
@@ -1632,20 +1632,20 @@ void ConstGen::processEquals(EPRecord *record) {
 		ADDCONSTRAINT(new Constraint(IMPLIES, outputtrue, new Constraint(AND, numvalvars, vars)), "impequal2");
 
 		/*
-		
-		Constraint * functionimplication=new Constraint(IMPLIES,generateEquivConstraint(numvalvars, valvar1, valvar2), outputtrue);
-		ADDCONSTRAINT(functionimplication,"equalsimplspecial");
-		Constraint * functionimplicationneg=new Constraint(IMPLIES,outputtrue, generateEquivConstraint(numvalvars, valvar1, valvar2));
-		ADDCONSTRAINT(functionimplicationneg,"equalsimplspecialneg");
-		*/
+
+		   Constraint * functionimplication=new Constraint(IMPLIES,generateEquivConstraint(numvalvars, valvar1, valvar2), outputtrue);
+		   ADDCONSTRAINT(functionimplication,"equalsimplspecial");
+		   Constraint * functionimplicationneg=new Constraint(IMPLIES,outputtrue, generateEquivConstraint(numvalvars, valvar1, valvar2));
+		   ADDCONSTRAINT(functionimplicationneg,"equalsimplspecialneg");
+		 */
 		return;
 	}
 
 	if (inputs[0]==NULL && inputs[1]==NULL) {
-		IntIterator *iit0=record->getSet(VC_BASEINDEX+0)->iterator();	
+		IntIterator *iit0=record->getSet(VC_BASEINDEX+0)->iterator();
 		uint64_t constval=iit0->next();
 		delete iit0;
-		IntIterator *iit1=record->getSet(VC_BASEINDEX+1)->iterator();	
+		IntIterator *iit1=record->getSet(VC_BASEINDEX+1)->iterator();
 		uint64_t constval2=iit1->next();
 		delete iit1;
 
@@ -1655,12 +1655,12 @@ void ConstGen::processEquals(EPRecord *record) {
 			ADDCONSTRAINT(outputtrue->negate(), "equalsconst");
 		}
 		return;
- 	}
-	
+	}
+
 	if (inputs[0]==NULL ||
 			inputs[1]==NULL) {
-		int nullindex=inputs[0]==NULL?0:1;
-		IntIterator *iit=record->getSet(VC_BASEINDEX+nullindex)->iterator();	
+		int nullindex=inputs[0]==NULL ? 0 : 1;
+		IntIterator *iit=record->getSet(VC_BASEINDEX+nullindex)->iterator();
 		uint64_t constval=iit->next();
 		delete iit;
 
@@ -1674,17 +1674,17 @@ void ConstGen::processEquals(EPRecord *record) {
 		Constraint *functionimplication2=new Constraint(IMPLIES, outputtrue, l2);
 		ADDCONSTRAINT(functionimplication2,"equalsimpl");
 	}
-	
-	IntIterator *iit=record->getSet(VC_BASEINDEX)->iterator();	
+
+	IntIterator *iit=record->getSet(VC_BASEINDEX)->iterator();
 	while(iit->hasNext()) {
 		uint64_t val1=iit->next();
-		
-		IntIterator *iit2=record->getSet(VC_BASEINDEX+1)->iterator();	
+
+		IntIterator *iit2=record->getSet(VC_BASEINDEX+1)->iterator();
 		while(iit2->hasNext()) {
 			uint64_t val2=iit2->next();
 			Constraint *l=getRetValueEncoding(inputs[0], val1);
 			Constraint *r=getRetValueEncoding(inputs[1], val2);
-			Constraint *imp=(val1==val2)?outputtrue:outputtrue->negate();
+			Constraint *imp=(val1==val2) ? outputtrue : outputtrue->negate();
 			Constraint * functionimplication=new Constraint(IMPLIES, new Constraint(AND, l, r), imp);
 			ADDCONSTRAINT(functionimplication,"equalsimpl");
 		}
@@ -1750,7 +1750,7 @@ void ConstGen::processRecord(EPRecord *record) {
 	case FENCE:
 		processFence(record);
 		break;
-#endif		
+#endif
 	case RMW:
 #ifdef TSO
 		processFence(record);
@@ -1831,7 +1831,7 @@ void ConstGen::visitRecord(EPRecord *record) {
 void ConstGen::recordExecCond(EPRecord *record) {
 	ExecPoint *eprecord=record->getEP();
 	EPValue * branchval=record->getBranch();
-	EPRecord * branch=(branchval==NULL)?NULL:branchval->getRecord();
+	EPRecord * branch=(branchval==NULL) ? NULL : branchval->getRecord();
 	ExecPoint *epbranch= (branch==NULL) ? NULL : branch->getEP();
 	RecordSet *srs=NULL;
 	RecordIterator *sri=nonlocaltrans->iterator();
@@ -1899,7 +1899,7 @@ void ConstGen::traverseRecord(EPRecord *record, bool initial) {
 				workstack->push_back(next);
 			for(uint i=0;i<record->numValues();i++) {
 				EPValue *branchdir=record->getValue(i);
-				
+
 				//Could have an empty branch, so make sure the branch actually
 				//runs code
 				if (branchdir->getFirstRecord()!=NULL)
@@ -1921,5 +1921,5 @@ unsigned int RecPairHash(RecPair *rp) {
 
 bool RecPairEquals(RecPair *r1, RecPair *r2) {
 	return ((r1->epr1==r2->epr1)&&(r1->epr2==r2->epr2)) ||
-		((r1->epr1==r2->epr2)&&(r1->epr2==r2->epr1));
+				 ((r1->epr1==r2->epr2)&&(r1->epr2==r2->epr1));
 }

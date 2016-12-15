@@ -15,7 +15,7 @@
 #include "eprecord.h"
 
 class MCChange {
- public:
+public:
 	MCChange(EPRecord *record, uint64_t _val, unsigned int _index);
 	~MCChange();
 	EPRecord *getRecord() {return record;}
@@ -29,7 +29,7 @@ class MCChange {
 	void print();
 	MEMALLOC;
 
- private:
+private:
 	EPRecord *record;
 	uint64_t val;
 	unsigned int index;

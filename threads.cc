@@ -109,7 +109,7 @@ Thread::Thread(thread_id_t tid) :
 	user_thread(NULL),
 	waiting(NULL),
 	id(tid),
-	state(THREAD_READY), /* Thread is always ready? */
+	state(THREAD_READY),			/* Thread is always ready? */
 	model_thread(true)
 {
 	memset(&context, 0, sizeof(context));
@@ -189,7 +189,7 @@ void Thread::set_waiting(Thread *th) {
  */
 bool Thread::is_waiting_on(const Thread *t) {
 	Thread *wait;
-	for (wait = waiting_on(); wait != NULL; wait = wait->waiting_on())
+	for (wait = waiting_on();wait != NULL;wait = wait->waiting_on())
 		if (wait == t)
 			return true;
 	return false;

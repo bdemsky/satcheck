@@ -29,6 +29,6 @@ static inline uint64_t getmask(uint len) {
 }
 
 
-#define NUMBITS(x) ((x==0)?0:8*sizeof(x)-__builtin_clz(x))
+#define NUMBITS(x) ((x==0) ? 0 : 8*sizeof(x)-__builtin_clz(x))
 
 #endif

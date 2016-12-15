@@ -20,7 +20,7 @@ FunctionRecord::FunctionRecord(ConstGen *cg, EPRecord *func) : function(func) {
 		cg->getArrayNewVars(numvars, vars);
 	} else {
 		uint numvals=function->getSet(VC_FUNCOUTINDEX)->getSize();
-		numvals++;//allow for new combinations in sat formulas
+		numvals++;						//allow for new combinations in sat formulas
 		numvars=NUMBITS(numvals-1);
 		vars=(Constraint **)model_malloc(numvars*sizeof(Constraint *));
 		cg->getArrayNewVars(numvars, vars);

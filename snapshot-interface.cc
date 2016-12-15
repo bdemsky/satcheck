@@ -32,12 +32,12 @@ struct snapshot_entry {
 };
 
 class SnapshotStack {
- public:
+public:
 	int backTrackBeforeStep(int seq_index);
 	void snapshotStep(int seq_index);
 
 	MEMALLOC;
- private:
+private:
 	ModelVector<struct snapshot_entry> stack;
 };
 
@@ -164,7 +164,7 @@ static void SnapshotGlobalSegments()
 int SnapshotStack::backTrackBeforeStep(int seqindex)
 {
 	int i;
-	for (i = (int)stack.size() - 1; i >= 0; i++)
+	for (i = (int)stack.size() - 1;i >= 0;i++)
 		if (stack[i].index <= seqindex)
 			break;
 		else

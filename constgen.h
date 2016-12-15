@@ -46,7 +46,7 @@ struct MC_Stat {
 #endif
 
 class ConstGen {
- public:
+public:
 	ConstGen(MCExecution *e);
 	~ConstGen();
 	bool process();
@@ -71,13 +71,13 @@ class ConstGen {
 #ifdef STATS
 	MC_Stat *curr_stat;
 #endif
-	
+
 	MEMALLOC;
- private:
+private:
 	Constraint * getRetValueEncoding(EPRecord *record, uint64_t value);
 	Constraint * getMemValueEncoding(EPRecord *record, uint64_t value);
 	bool subsumesExecutionConstraint(EPRecord *recordsubsumes, EPRecord *record);
-	
+
 	void addBranchGoal(EPRecord *, Constraint *c);
 	void addGoal(EPRecord *, Constraint *c);
 	void translateGoals();
@@ -124,7 +124,7 @@ class ConstGen {
 #endif
 
 	/** These functions build closed groups of memory operations that
-			can store/load from each other. */
+	                can store/load from each other. */
 	void groupMemoryOperations(EPRecord *op);
 	void mergeSets(StoreLoadSet *to, StoreLoadSet *from);
 
@@ -136,10 +136,10 @@ class ConstGen {
 	void genTransOrderConstraint(EPRecord *t1rec, EPRecord *t2rec, EPRecord *t3rec);
 
 	/** The hashtable maps an address to the closure set of
-			memory operations that may touch that address. */
+	                memory operations that may touch that address. */
 	StoreLoadSetHashTable *storeloadtable;
 	/** This hashtable maps a load to all of the stores it may read
-			from. */
+	                from. */
 	LoadHashTable *loadtable;
 
 	MCExecution *execution;
@@ -167,11 +167,11 @@ class ConstGen {
 };
 
 class RecPair {
- public:
- RecPair(EPRecord *r1, EPRecord *r2) :
-	epr1(r1),
-	epr2(r2),
-	constraint(NULL) {
+public:
+	RecPair(EPRecord *r1, EPRecord *r2) :
+		epr1(r1),
+		epr2(r2),
+		constraint(NULL) {
 	}
 	EPRecord *epr1;
 	EPRecord *epr2;

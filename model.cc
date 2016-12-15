@@ -30,7 +30,7 @@ void user_main_wrapper(void *) {
 	user_main(model->params.argc, model->params.argv);
 }
 
-/** Implements the main loop for model checking test case 
+/** Implements the main loop for model checking test case
  */
 void MC::check() {
 	snapshot_record(0);

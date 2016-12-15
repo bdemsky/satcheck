@@ -54,6 +54,6 @@ int BranchRecord::getBranchValue(bool * array) {
 	}
 	if (!alwaysexecuted)
 		value--;
-	
+
 	return value;
 }

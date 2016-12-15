@@ -12,14 +12,14 @@
 #include "classlist.h"
 
 class ValueRecord {
- public:
+public:
 	ValueRecord(IntHashSet *set);
-  ~ValueRecord();
-  Constraint * getValueEncoding(Constraint **vars, uint64_t value);
+	~ValueRecord();
+	Constraint * getValueEncoding(Constraint **vars, uint64_t value);
 	uint64_t getValue(Constraint **vars, bool *satsolution);
 	uint getNumVars() {return numvars;}
 	MEMALLOC;
- private:
+private:
 	IntHashSet *set;
 	uint numvars;
 };
