@@ -159,7 +159,7 @@ void model_free(void *ptr)
 /** Bootstrap allocation. Problem is that the dynamic linker calls require
  *  calloc to work and calloc requires the dynamic linker to work. */
 
-#define BOOTSTRAPBYTES 4096
+#define BOOTSTRAPBYTES 131072
 char bootstrapmemory[BOOTSTRAPBYTES];
 size_t offset = 0;
 
@@ -169,7 +169,7 @@ void * HandleEarlyAllocationRequest(size_t sz)
 	sz = (sz + 7) & ~7;
 
 	if (sz > (BOOTSTRAPBYTES-offset)) {
-		model_print("OUT OF BOOTSTRAP MEMORY\n");
+		model_print("OUT OF BOOTSTRAP MEMORY.  Increase the size of BOOTSTRAPBYTES in mymemory.cc\n");
 		exit(EXIT_FAILURE);
 	}
 
