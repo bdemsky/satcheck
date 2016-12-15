@@ -14,10 +14,10 @@ all: $(OBJECTS)
 -include $(DEPS)
 
 %.o: %.c
-	$(CC) -MMD -MF $(@D)/.$(@F).d -o $@ $< $(CPPFLAGS) -L$(BASE) -l$(LIB_NAME)
+	$(CC) -MMD -MF $(@D)/.$(@F).d -o $@ $< $(CPPFLAGS) -L$(BASE) -l$(TEST_LIB_SO)
 
 %.o: %.cc
-	$(CXX) -MMD -MF $(@D)/.$(@F).d -o $@ $< $(CPPFLAGS) -L$(BASE) -l$(LIB_NAME)
+	$(CXX) -MMD -MF $(@D)/.$(@F).d -o $@ $< $(CPPFLAGS) -L$(BASE) -l$(TEST_LIB_SO)
 
 clean::
 	rm -f $(OBJECTS) $(DEPS)

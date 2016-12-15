@@ -8,6 +8,7 @@ UNAME := $(shell uname)
 LIB_NAME := model
 TSO_LIB_SO := libtso_$(LIB_NAME).so
 SC_LIB_SO := libsc_$(LIB_NAME).so
+TEST_LIB_SO := sc_model
 
 CPPFLAGS += -Wall -g -O3
 
