@@ -9,6 +9,8 @@
 
 #ifdef __cplusplus
 extern "C" {
+#else
+#include <stdbool.h>
 #endif
 	typedef unsigned int MCID;
 #define MC2_PTR_LENGTH sizeof(void *)

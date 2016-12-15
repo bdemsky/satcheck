@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <threads.h>
-#include <stdatomic.h>
 
 #include "libinterface.h"
 

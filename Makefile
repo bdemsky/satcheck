@@ -5,7 +5,7 @@ MKDIR_P = mkdir -p
 TSO_DIR = build_tso
 SC_DIR = build_sc
 
-CPP_SOURCES := mymemory.cc context.cc snapshot.cc snapshot-interface.cc libinterface.cc execpoint.cc main.cc cmodelint.cc eprecord.cc epvalue.cc mcexecution.cc model.cc libthreads.cc mcschedule.cc common.cc threads.cc planner.cc cgoal.cc change.cc constgen.cc constraint.cc branchrecord.cc valuerecord.cc storeloadset.cc functionrecord.cc loadrf.cc schedulebuilder.cc equalsrecord.cc inc_solver.cc
+CPP_SOURCES := mymemory.cc context.cc snapshot.cc snapshot-interface.cc libinterface.cc execpoint.cc main.cc eprecord.cc epvalue.cc mcexecution.cc model.cc libthreads.cc mcschedule.cc common.cc threads.cc planner.cc cgoal.cc change.cc constgen.cc constraint.cc branchrecord.cc valuerecord.cc storeloadset.cc functionrecord.cc loadrf.cc schedulebuilder.cc equalsrecord.cc inc_solver.cc
 C_SOURCES := malloc.c
 
 TSO_OBJECTS := $(CPP_SOURCES:%.cc=$(TSO_DIR)/%.o) $(C_SOURCES:%.c=$(TSO_DIR)/%.o)

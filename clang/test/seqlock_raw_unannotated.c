@@ -1,9 +1,5 @@
 #include <stdio.h>
 #include <threads.h>
-#include <stdatomic.h>
-
-#include <stdatomic.h>
-#include "threads.h"
 #include "libinterface.h"
 
 /*atomic_*/ int _seq;

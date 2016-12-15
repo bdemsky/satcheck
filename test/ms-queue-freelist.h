@@ -1,9 +1,7 @@
-#include <stdatomic.h>
-
 #define MAX_NODES			0xf
 
 typedef unsigned long long pointer;
-typedef atomic_ullong pointer_t;
+typedef void * pointer_t;
 
 #define MAKE_POINTER(ptr, count)	((((pointer)count) << 32) | ptr)
 #define PTR_MASK 0xffffffffLL

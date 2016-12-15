@@ -3,8 +3,9 @@
 // #include "librace.h"
 // #include "model-assert.h"
 
-#include "ms-queue-freelist.h"
 #include "libinterface.h"
+#include "ms-queue-freelist.h"
+
 
 #define MAX_FREELIST 4 /* Each thread can own up to MAX_FREELIST free nodes */
 #define INITIAL_FREE 2 /* Each thread starts with INITIAL_FREE free nodes */
