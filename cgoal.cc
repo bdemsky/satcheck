@@ -31,7 +31,7 @@ void CGoal::print() {
 	model_print("goal: ");
 	model_print("(");
 	for(uint i=0;i<num;i++) {
-		model_print("%lu",valarray[i]);
+		model_print("%llu",valarray[i]);
 		if ((i+1)!=num)
 			model_print(", ");
 	}

@@ -31,20 +31,20 @@ void neatPrint(EPRecord *r, ConstGen *cgen, bool *satsolution) {
 	case LOAD: {
 		StoreLoadSet * sls=cgen->getStoreLoadSet(r);
 		model_print("address=%p ",  sls->getAddressEncoding(cgen, r, satsolution));
-		model_print("rd=%lu ", sls->getValueEncoding(cgen, r, satsolution));
+		model_print("rd=%llu ", sls->getValueEncoding(cgen, r, satsolution));
 	}
 	break;
 	case STORE: {
 		StoreLoadSet * sls=cgen->getStoreLoadSet(r);
 		model_print("address=%p ",  sls->getAddressEncoding(cgen, r, satsolution));
-		model_print("wr=%lu ", sls->getValueEncoding(cgen, r, satsolution));
+		model_print("wr=%llu ", sls->getValueEncoding(cgen, r, satsolution));
 	}
 	break;
 	case RMW: {
 		StoreLoadSet * sls=cgen->getStoreLoadSet(r);
 		model_print("address=%p ",  sls->getAddressEncoding(cgen, r, satsolution));
-		model_print("rd=%lu ", sls->getRMWRValueEncoding(cgen, r, satsolution));
-		model_print("wr=%lu ", sls->getValueEncoding(cgen, r, satsolution));
+		model_print("rd=%llu ", sls->getRMWRValueEncoding(cgen, r, satsolution));
+		model_print("wr=%llu ", sls->getValueEncoding(cgen, r, satsolution));
 	}
 	break;
 	default:

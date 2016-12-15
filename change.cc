@@ -23,7 +23,7 @@ MCChange::~MCChange() {
 void MCChange::print() {
 	record->print();
 	model_print("(");
-	model_print("index=%u, val=%lu)\n", index, val);
+	model_print("index=%u, val=%llu)\n", index, val);
 }
 
 bool MCChangeEquals(MCChange *mcc1, MCChange *mcc2) {

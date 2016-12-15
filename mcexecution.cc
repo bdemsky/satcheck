@@ -212,7 +212,7 @@ uint64_t MCExecution::rmw(enum atomicop op, void *addr, uint len, uint64_t currv
 	uint64_t newval;
 	uint64_t retval=dormwaction(op, addr, len, currval, oldval, valarg, &newval);
 	if (DBG_ENABLED()) {
-		model_print("RMW %p oldval=%lu valarg=%lu retval=%lu", addr, oldval, valarg, retval);
+		model_print("RMW %p oldval=%llu valarg=%llu retval=%llu", addr, oldval, valarg, retval);
 		currexecpoint->print();
 		model_print("\n");
 	}
@@ -313,7 +313,7 @@ void MCExecution::doStore(thread_id_t tid) {
 	EPValue * epval=list->front();
 	list->pop_front();
 	if (DBG_ENABLED()) {
-		model_print("tid = %lu: ", tid);
+		model_print("tid = %d: ", tid);
 	}
 	doStore(epval);
 }
@@ -323,7 +323,7 @@ void MCExecution::doStore(EPValue *epval) {
 	uint64_t val=epval->getValue();
 	int len=epval->getLen();
 	if (DBG_ENABLED()) {
-		model_print("flushing %d bytes *(%p) = %lu", len, addr, val);
+		model_print("flushing %d bytes *(%p) = %llu", len, addr, val);
 		currexecpoint->print();
 		model_print("\n");
 	}
@@ -405,7 +405,7 @@ void MCExecution::store(void *addr, uint64_t val, int len) {
 #endif
 
 	if (DBG_ENABLED()) {
-		model_print("STORE *%p=%lu ", addr, val);
+		model_print("STORE *%p=%llu ", addr, val);
 		currexecpoint->print();
 		model_print("\n");
 	}
@@ -515,7 +515,7 @@ uint64_t MCExecution::load(const void *addr, int len) {
 #endif
 
 	if (DBG_ENABLED()) {
-		model_print("%lu(mid=%u)=LOAD %p ", val, id_retval, addr);
+		model_print("%llu(mid=%u)=LOAD %p ", val, id_retval, addr);
 		currexecpoint->print();
 		model_print("\n");
 	}

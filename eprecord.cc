@@ -158,9 +158,9 @@ void EPRecord::print(int f) {
 				CGoal *goal=cit->next();
 				model_dprintf(f,"(");
 				for(uint i=0;i<getNumFuncInputs();i++) {
-					model_dprintf(f,"%lu ", goal->getValue(i+VC_BASEINDEX));
+					model_dprintf(f,"%llu ", goal->getValue(i+VC_BASEINDEX));
 				}
-				model_dprintf(f,"=> %lu)", goal->getOutput());
+				model_dprintf(f,"=> %llu)", goal->getOutput());
 			}
 			delete cit;
 		}
@@ -174,7 +174,7 @@ void EPRecord::print(int f) {
 		model_dprintf(f, "{");
 
 		while(it->hasNext()) {
-			model_dprintf(f, "%lu ", it->next());
+			model_dprintf(f, "%llu ", it->next());
 		}
 		model_dprintf(f, "}");
 		delete it;
@@ -185,7 +185,7 @@ void EPRecord::print(int f) {
 		model_dprintf(f,"{");
 		while(it->hasNext()) {
 			uint64_t v=it->next();
-			model_dprintf(f,"%lu ", v);
+			model_dprintf(f,"%llu ", v);
 		}
 		model_dprintf(f,"}");
 		delete it;

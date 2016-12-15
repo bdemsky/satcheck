@@ -239,12 +239,13 @@ void *malloc(size_t size)
 /** @brief Snapshotting free implementation for user programs */
 void free(void * ptr)
 {
-	if (!DontFree(ptr))
+	if (!DontFree(ptr)) {
 		if (switch_alloc) {
 			model_free(ptr);
 		} else {
 			mspace_free(user_snapshot_space, ptr);
 		}
+	}
 }
 
 /** @brief Snapshotting realloc implementation for user programs */
