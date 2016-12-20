@@ -51,6 +51,7 @@ typedef HSIterator<uint64_t, uint64_t, 0, model_malloc, model_calloc, model_free
 typedef HashSet<uint64_t, uint64_t, 0, snapshot_malloc, snapshot_calloc, snapshot_free> SnapIntHashSet;
 typedef HSIterator<uint64_t, uint64_t, 0, snapshot_malloc, snapshot_calloc, snapshot_free> SnapIntIterator;
 typedef HashTable<EPRecord *, Constraint **, uintptr_t, 4, model_malloc, model_calloc, model_free> VarTable;
+typedef HashTable<EPRecord *, Constraint *, uintptr_t, 4, model_malloc, model_calloc, model_free> RecToConsTable;
 typedef HashTable<EPRecord *, FunctionRecord *, uintptr_t, 4, model_malloc, model_calloc, model_free> FunctionTable;
 typedef HashTable<EPRecord *, EqualsRecord *, uintptr_t, 4, model_malloc, model_calloc, model_free> EqualsTable;
 #endif

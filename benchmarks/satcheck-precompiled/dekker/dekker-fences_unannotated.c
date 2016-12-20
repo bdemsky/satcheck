@@ -85,6 +85,8 @@ void p1() {
 			
 			store_32(&flag1, true);
 			// std::atomic_thread_fence(std::memory_order_seq_cst);
+		} else {
+			MC2_yield();
 		}
 	}
 

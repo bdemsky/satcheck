@@ -42,3 +42,8 @@ handle SIGBUS nostop noprint
 
 To run in Linux under gdb, use:
 handle SIGSEGV nostop noprint
+
+IV. Generating doxygen docs
+
+Type "make docs".
+Then look in doc/docs/.

@@ -38,6 +38,7 @@ ConstGen::ConstGen(MCExecution *e) :
 	rpt(new RecPairTable()),
 	numconstraints(0),
 	goalset(new ModelVector<Constraint *>()),
+	yieldlist(new ModelVector<EPRecord *>()),
 	goalvararray(NULL),
 	vars(new ModelVector<Constraint *>()),
 	branchtable(new BranchTable()),
@@ -45,9 +46,11 @@ ConstGen::ConstGen(MCExecution *e) :
 	equalstable(new EqualsTable()),
 	schedulebuilder(new ScheduleBuilder(e, this)),
 	nonlocaltrans(new RecordSet()),
+	incompleteexploredbranch(new RecordSet()),
 	execcondtable(new LoadHashTable()),
 	solver(NULL),
 	rectoint(new RecToIntTable()),
+	yieldtable(new RecToConsTable()),
 	varindex(1),
 	schedule_graph(0),
 	has_untaken_branches(false)
@@ -80,14 +83,17 @@ ConstGen::~ConstGen() {
 	delete threadactions;
 	delete rpt;
 	delete goalset;
+	delete yieldlist;
 	delete vars;
 	delete branchtable;
 	delete functiontable;
 	delete equalstable;
 	delete schedulebuilder;
 	delete nonlocaltrans;
+	delete incompleteexploredbranch;
 	delete execcondtable;
 	delete rectoint;
+	delete yieldtable;
 }
 
 void resetstoreloadtable(StoreLoadSetHashTable * storeloadtable) {
@@ -128,8 +134,11 @@ void ConstGen::reset() {
 	rpt->resetanddelete();
 	resetstoreloadtable(storeloadtable);
 	nonlocaltrans->reset();
+	incompleteexploredbranch->reset();
 	threadactions->clear();
 	rectoint->reset();
+	yieldtable->reset();
+	yieldlist->clear();
 	goalset->clear();
 	varindex=1;
 	numconstraints=0;
@@ -1138,8 +1147,12 @@ bool ConstGen::isAlwaysExecuted(EPRecord *record) {
 void ConstGen::insertBranch(EPRecord *record) {
 	uint numvalue=record->numValues();
 	/** need one value for new directions */
-	if (numvalue<record->getLen())
+	if (numvalue<record->getLen()) {
 		numvalue++;
+		if (model->params.noexecyields) {
+			incompleteexploredbranch->add(record);
+		}
+	}
 	/** need extra value to represent that branch wasn't executed. **/
 	bool alwaysexecuted=isAlwaysExecuted(record);
 	if (!alwaysexecuted)
@@ -1471,13 +1484,84 @@ void ConstGen::processStore(EPRecord *record) {
 	processAddresses(record);
 }
 
+/** **/
+
+void ConstGen::computeYieldCond(EPRecord *record) {
+	ExecPoint *yieldep=record->getEP();
+	EPRecord *prevyield=NULL;
+	ExecPoint *prevyieldep=NULL;
+	
+	for(int i=(int)(yieldlist->size()-1);i>=0;i--) {
+		EPRecord *tmpyield=(*yieldlist)[i];
+		ExecPoint *tmpep=tmpyield->getEP();
+		//Do we have a previous yield operation
+		if (yieldep->compare(tmpep)==CR_BEFORE) {
+			//Yes
+			prevyield=tmpyield;
+			prevyieldep=prevyield->getEP();
+			break;
+		}
+	}
+	
+	yieldlist->push_back(record);
+
+	ModelVector<Constraint *> * novel_branches=new ModelVector<Constraint *>();
+	RecordIterator *sri=incompleteexploredbranch->iterator();
+	while(sri->hasNext()) {
+		EPRecord * unexploredbranch=sri->next();
+		ExecPoint * branchep=unexploredbranch->getEP();
+		if (yieldep->compare(branchep)!=CR_BEFORE) {
+			//Branch does not occur before yield, so skip
+			continue;
+		}
+
+		//See if the previous yield already accounts for this branch
+		if (prevyield != NULL &&
+				prevyieldep->compare(branchep)==CR_BEFORE) {
+			//Branch occurs before previous yield, so we can safely skip this branch
+						continue;
+		}
+
+		//This is a branch that could prevent this yield from being executed
+		BranchRecord *br=branchtable->get(unexploredbranch);
+		Constraint * novel_branch=br->getNewBranch();
+		novel_branches->push_back(novel_branch);
+	}
+
+	int num_constraints=((prevyield==NULL)?0:1)+novel_branches->size();
+	Constraint *carray[num_constraints];
+	int arr_index=0;
+	
+	if (prevyield!=NULL) {
+		carray[arr_index++]=yieldtable->get(prevyield);//get constraint for old yield
+	}
+	for(uint i=0;i<novel_branches->size();i++) {
+		carray[arr_index++]=(*novel_branches)[i];
+	}
+	
+	Constraint *cor=num_constraints!=0?new Constraint(OR, num_constraints, carray):&cfalse;
+
+	Constraint *var=getNewVar();
+	//If the variable is true, then we need to have taken some branch
+	//ahead of the yield
+	Constraint *implies=new Constraint(IMPLIES, var, cor);
+	ADDCONSTRAINT(implies, "possiblebranchnoyield");
+	yieldtable->put(record, var);
+	
+	delete novel_branches;
+	delete sri;
+}
+
+
 /** Handle yields by just forbidding them via the SAT formula. */
 
 void ConstGen::processYield(EPRecord *record) {
-	if (model->params.noyields &&
-			record->getBranch()!=NULL) {
-		Constraint * noyield=getExecutionConstraint(record)->negate();
-		ADDCONSTRAINT(noyield, "noyield");
+	if (model->params.noexecyields) {
+		computeYieldCond(record);
+		Constraint * noexecyield=getExecutionConstraint(record)->negate();
+		Constraint * branchaway=yieldtable->get(record);
+		Constraint * avoidbranch=new Constraint(OR, noexecyield, branchaway);
+		ADDCONSTRAINT(avoidbranch, "noexecyield");
 	}
 }
 
@@ -1732,6 +1816,9 @@ void ConstGen::processFence(EPRecord *record) {
 }
 #endif
 
+/** processRecord performs actions on second traversal of event
+		graph. */
+
 void ConstGen::processRecord(EPRecord *record) {
 	switch (record->getType()) {
 	case FUNCTION:
@@ -1774,6 +1861,9 @@ void ConstGen::processRecord(EPRecord *record) {
 		break;
 	}
 }
+
+/** visitRecord performs actions done on first traversal of event
+ *	graph. */
 
 void ConstGen::visitRecord(EPRecord *record) {
 	switch (record->getType()) {
@@ -1888,6 +1978,9 @@ void ConstGen::traverseRecord(EPRecord *record, bool initial) {
 			workstack->push_back(record->getChildRecord());
 		}
 		if (record->getType()==NONLOCALTRANS) {
+			return;
+		}
+		if (record->getType()==YIELD && model->params.noexecyields) {
 			return;
 		}
 		if (record->getType()==LOOPEXIT) {

@@ -115,7 +115,8 @@ private:
 	void processLoad(EPRecord *record);
 	void processAddresses(EPRecord *record);
 	void recordExecCond(EPRecord *record);
-
+	void computeYieldCond(EPRecord *record);
+	
 	/** TSO Specific methods */
 #ifdef TSO
 	void genTSOTransOrderConstraints();
@@ -148,6 +149,7 @@ private:
 	RecPairTable *rpt;
 	uint numconstraints;
 	ModelVector<Constraint *> * goalset;
+	ModelVector<EPRecord *> *yieldlist;
 	Constraint ** goalvararray;
 	ModelVector<Constraint *> * vars;
 	BranchTable * branchtable;
@@ -155,9 +157,11 @@ private:
 	EqualsTable *equalstable;
 	ScheduleBuilder *schedulebuilder;
 	RecordSet *nonlocaltrans;
+	RecordSet *incompleteexploredbranch;
 	LoadHashTable *execcondtable;
 	IncrementalSolver *solver;
 	RecToIntTable *rectoint;
+	RecToConsTable *yieldtable;
 #ifdef STATS
 	ModelVector<struct MC_Stat *> * stats;
 #endif

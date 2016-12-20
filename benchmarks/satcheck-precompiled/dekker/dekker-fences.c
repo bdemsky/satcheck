@@ -136,7 +136,9 @@ MC2_exitLoop();
 			// std::atomic_thread_fence(std::memory_order_seq_cst);
 			MC2_merge(_br4);
 		}
- else { _br4 = MC2_branchUsesID(_cond4_m, 0, 2, true);	MC2_merge(_br4);
+ else { _br4 = MC2_branchUsesID(_cond4_m, 0, 2, true);
+			MC2_yield();
+	 MC2_merge(_br4);
 	 }	}
 MC2_exitLoop();
 

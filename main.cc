@@ -27,7 +27,7 @@
 static void param_defaults(struct model_params *params)
 {
 	params->branches = false;
-	params->noyields = false;
+	params->noexecyields = false;
 	params->verbose = !!DBG_ENABLED();
 }
 
@@ -67,7 +67,7 @@ static void parse_options(struct model_params *params, int argc, char **argv)
 			params->branches = true;
 			break;
 		case 'Y':
-			params->noyields = true;
+			params->noexecyields = true;
 			break;
 		case 'v':
 			params->verbose = optarg ? atoi(optarg) : 1;

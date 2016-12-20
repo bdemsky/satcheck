@@ -13,6 +13,7 @@
 #include "constgen.h"
 #include "branchrecord.h"
 #include "storeloadset.h"
+#include "model.h"
 
 ScheduleBuilder::ScheduleBuilder(MCExecution *_execution, ConstGen *cgen) :
 	cg(cgen),
@@ -215,6 +216,8 @@ EPRecord * ScheduleBuilder::processRecord(EPRecord *record, bool *satsolution) {
 	case LABEL:
 		break;
 	case YIELD:
+		if (model->params.noexecyields)
+			return NULL;
 		break;
 	default:
 		ASSERT(0);

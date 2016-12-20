@@ -18,8 +18,8 @@ struct model_params {
 	/** @brief Verbosity (0 = quiet; 1 = noisy; 2 = noisier) */
 	int verbose;
 
-	/** @brief Avoid executiny yields. */
-	bool noyields;
+	/** @brief Avoid executing yields. */
+	bool noexecyields;
 
 	/** @brief Only explore branches. */
 	bool branches;
