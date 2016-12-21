@@ -842,6 +842,9 @@ void MCExecution::threadFinish() {
 void MCExecution::threadYield() {
 	getOrCreateCurrRecord(YIELD, NULL, 0, 0, 8, false);
 	currexecpoint->incrementTop();
+	if (model->params.noexecyields) {
+		threadFinish();
+	}
 }
 
 /** @brief Thread yield. */

@@ -347,7 +347,8 @@ void ConstGen::printRecord(EPRecord *record, int file) {
 		doPrint(record,file);
 
 		if (record->getType()==LOOPENTER) {
-			workstack->push_back(record->getNextRecord());
+			if (record->getNextRecord()!=NULL)
+				workstack->push_back(record->getNextRecord());
 			workstack->push_back(record->getChildRecord());
 			return;
 		}
@@ -1975,7 +1976,8 @@ void ConstGen::traverseRecord(EPRecord *record, bool initial) {
 			processRecord(record);
 		}
 		if (record->getType()==LOOPENTER) {
-			workstack->push_back(record->getNextRecord());
+			if (record->getNextRecord()!=NULL)
+				workstack->push_back(record->getNextRecord());
 			workstack->push_back(record->getChildRecord());
 			return;
 		}
