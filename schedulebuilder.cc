@@ -70,7 +70,6 @@ void ScheduleBuilder::buildSchedule(bool * satsolution) {
 			EPRecord *next=processRecord(record, satsolution);
 #ifdef TSO
 			if (next != NULL) {
-
 				if (next->getType()==STORE) {
 					stores[index]->push_back(next);
 					next=getNextRecord(next);
@@ -85,6 +84,9 @@ void ScheduleBuilder::buildSchedule(bool * satsolution) {
 			}
 #endif
 			if (next!=record) {
+#ifdef DUMP_SAT_SCHEDULE
+				neatPrint(record, cg, satsolution);
+#endif
 				threads[index]=next;
 				index=index-1;
 			}
@@ -111,6 +113,10 @@ void ScheduleBuilder::buildSchedule(bool * satsolution) {
 
 		if (earliest == NULL)
 			break;
+
+#ifdef DUMP_SAT_SCHEDULE
+		neatPrint(earliest, cg, satsolution);
+#endif
 
 		for(uint index=0;index<threads.size();index++) {
 			EPRecord *record=threads[index];

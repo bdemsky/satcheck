@@ -1490,19 +1490,20 @@ void ConstGen::computeYieldCond(EPRecord *record) {
 	ExecPoint *yieldep=record->getEP();
 	EPRecord *prevyield=NULL;
 	ExecPoint *prevyieldep=NULL;
-	
+
 	for(int i=(int)(yieldlist->size()-1);i>=0;i--) {
 		EPRecord *tmpyield=(*yieldlist)[i];
 		ExecPoint *tmpep=tmpyield->getEP();
-		//Do we have a previous yield operation
-		if (yieldep->compare(tmpep)==CR_BEFORE) {
+		//Do we have a previous yield operation from the same thread
+		if (tmpep->get_tid()==yieldep->get_tid() &&
+				yieldep->compare(tmpep)==CR_BEFORE) {
 			//Yes
 			prevyield=tmpyield;
 			prevyieldep=prevyield->getEP();
 			break;
 		}
 	}
-	
+
 	yieldlist->push_back(record);
 
 	ModelVector<Constraint *> * novel_branches=new ModelVector<Constraint *>();
@@ -1510,6 +1511,11 @@ void ConstGen::computeYieldCond(EPRecord *record) {
 	while(sri->hasNext()) {
 		EPRecord * unexploredbranch=sri->next();
 		ExecPoint * branchep=unexploredbranch->getEP();
+		if (branchep->get_tid()!=yieldep->get_tid()) {
+			//wrong thread
+			continue;
+		}
+
 		if (yieldep->compare(branchep)!=CR_BEFORE) {
 			//Branch does not occur before yield, so skip
 			continue;
@@ -1519,9 +1525,8 @@ void ConstGen::computeYieldCond(EPRecord *record) {
 		if (prevyield != NULL &&
 				prevyieldep->compare(branchep)==CR_BEFORE) {
 			//Branch occurs before previous yield, so we can safely skip this branch
-						continue;
+			continue;
 		}
-
 		//This is a branch that could prevent this yield from being executed
 		BranchRecord *br=branchtable->get(unexploredbranch);
 		Constraint * novel_branch=br->getNewBranch();

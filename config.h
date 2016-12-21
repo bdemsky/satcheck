@@ -48,6 +48,9 @@
 /* Size of stack to allocate for a thread. */
 #define STACK_SIZE (1024 * 1024)
 
+/** Dump schedule extracted from SAT Solution */
+//#define DUMP_SAT_SCHEDULE
+
 /** Enable debugging assertions (via ASSERT()) */
 //#define CONFIG_ASSERT
 
