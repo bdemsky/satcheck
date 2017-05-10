@@ -18,7 +18,7 @@
 LoadRF::LoadRF(EPRecord *_load, ConstGen *cg) : load(_load) {
 	RecordSet *mrfSet=cg->getMayReadFromSet(load);
 	uint numstores=mrfSet->getSize();
-	numvars=NUMBITS(numstores-1);
+	numvars=NUMBITS(numstores); 
 	vars=(Constraint **)model_malloc(numvars*sizeof(Constraint *));
 	cg->getArrayNewVars(numvars, vars);
 }

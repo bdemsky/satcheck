@@ -24,6 +24,10 @@
 /** Allocate a stack for a new thread. */
 static void * stack_allocate(size_t size)
 {
+	// TODO: This could be a bug if we have programs that start threads
+	// in different orders.  The solution is to use the same strategy
+	// the ALLOC action uses.
+
 	return snapshot_malloc(size);
 }
 
