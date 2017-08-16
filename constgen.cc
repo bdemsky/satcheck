@@ -1763,6 +1763,7 @@ void ConstGen::processEquals(EPRecord *record) {
 		Constraint *l2=getRetValueEncoding(r, constval);
 		Constraint *functionimplication2=new Constraint(IMPLIES, outputtrue, l2);
 		ADDCONSTRAINT(functionimplication2,"equalsimpl");
+        return;
 	}
 
 	IntIterator *iit=record->getSet(VC_BASEINDEX)->iterator();

@@ -654,6 +654,15 @@ uint64_t MCExecution::equals(MCID op1, uint64_t val1, MCID op2, uint64_t val2, M
 		recordFunctionChange(record, 0);
 		recordFunctionChange(record, 1);
 	}
+
+	if(op1 == MCID_NODEP) {
+		record->getSet(VC_BASEINDEX + 0)->add(val1);
+	}
+
+	if(op2 == MCID_NODEP) {
+		record->getSet(VC_BASEINDEX + 1)->add(val2);
+	}
+
 	MCID eqmcid=getNextMCID();
 	ASSERT(EPList->size()==eqmcid);
 	EPList->push_back(epvalue);
