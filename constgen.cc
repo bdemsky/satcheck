@@ -983,7 +983,8 @@ bool ConstGen::orderThread(EPRecord *first, EPRecord *second) {
 		EPRecord *join=(*joinvec)[i];
 		ExecPoint *jp=join->getEP();
 		if (jp->get_tid()==thr2 &&
-				jp->compare(ep2)==CR_AFTER)
+				jp->compare(ep2)==CR_AFTER &&
+				join->getJoinThread() == thr1)
 			return true;
 	}
 	return false;
